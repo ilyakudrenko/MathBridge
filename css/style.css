@@ -1,0 +1,643 @@
+/* Reset & Fonts */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background-color: #ffffff;
+  color: #222;
+  line-height: 1.6;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+
+/* ===== HERO SECTION ===== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: linear-gradient(to bottom right, #f7f9fb, #e9eef4);
+  padding: 1.5rem 2rem;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 90rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  background: transparent;
+  border-radius: 60px;
+  padding: 0.8rem 2rem;
+  transition: background 0.6s ease, box-shadow 0.6s ease, transform 0.6s ease;
+}
+
+/* When scrolled (not in hero) */
+.navbar.scrolled {
+  background: rgba(0, 119, 255, 0.75); /* translucent blue */
+  backdrop-filter: blur(8px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Logo --- */
+.logo {
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: #111;
+  padding: 0.6rem 1rem;
+  transition: color 0.4s ease;
+}
+.navbar.scrolled .logo {
+  color: #fff;
+}
+
+/* --- Links --- */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
+}
+.nav-links a {
+  text-decoration: none;
+  color: #111;
+  font-weight: 500;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+/* Hover underline */
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: #0077ff;
+  transition: width 0.3s ease;
+}
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+/* Change text color when scrolled */
+.navbar.scrolled .nav-links a {
+  color: #fff;
+}
+.navbar.scrolled .nav-links a::after {
+  background: #fff;
+}
+
+/* Active section highlight */
+.nav-links a.active {
+  font-weight: 600;
+}
+.nav-links a.active::after {
+  width: 100%;
+}
+
+/* --- CTA Button --- */
+.cta-btn {
+  background: transparent;
+  color: #111;
+  text-decoration: none;
+  padding: 0.6rem 1.4rem;
+  border-radius: 50px;
+  font-weight: 600;
+  transition: color 0.3s ease, background 0.4s ease;
+}
+.cta-btn:hover {
+  background: #0077ff;
+  color: #fff;
+}
+.navbar.scrolled .cta-btn {
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.navbar.scrolled .cta-btn:hover {
+  background: #fff;
+  color: #0077ff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+  .cta-btn {
+    display: none;
+  }
+}
+
+/* Hero content */
+.hero-content {
+  text-align: center;
+  margin-top: 10vh;
+  padding: 0 1rem;
+  z-index: 1;
+}
+
+.hero-content h1 {
+  font-size: 2.5rem;
+  color: #111;
+  margin-bottom: 1rem;
+}
+
+.hero-content p {
+  color: #555;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.primary-btn {
+  display: inline-block;
+  background: #0077ff;
+  color: #fff;
+  padding: 0.8rem 1.6rem;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+
+.primary-btn:hover {
+  background: #005fcc;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+  .cta-btn {
+    display: none;
+  }
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+}
+
+/* Make hero height smaller and centered better */
+.hero {
+  min-height: 70vh;
+  position: relative;
+  overflow: hidden;
+  padding-top: 20rem; /* ensures text isn’t under navbar */
+}
+
+/* Floating math base */
+.floating-math {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/*.float-item {
+  position: absolute;
+  font-size: 1.8rem;
+  color: rgba(0, 0, 0, 0.08);
+  user-select: none;
+  transition: transform 0.4s linear;
+}*/
+
+/* === FLOATING EQUATIONS — marker on whiteboard look === */
+.float-item {
+  position: absolute;
+  font-family: 'Permanent Marker', cursive; /* 🖊️ marker font */
+  font-size: 1.8rem;
+  color: rgba(0, 0, 0, 0.8); /* darker base color (overwritten by JS random color) */
+  user-select: none;
+  transition: transform 0.4s linear;
+  text-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.15),
+    0 2px 4px rgba(0, 0, 0, 0.05); /* 🧠 soft ink blur */
+  /*animation: subtleWiggle 3s infinite ease-in-out; /* ✨ subtle movement */
+  opacity: 0.6;
+}
+
+/* slight jitter effect — makes it feel hand-written */
+@keyframes subtleWiggle {
+  0%, 100% { transform: rotate(-0.3deg) scale(1); }
+  50% { transform: rotate(0.3deg) scale(1.02); }
+}
+
+@keyframes driftAuto {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(40px, -30px) rotate(8deg);
+  }
+  50% {
+    transform: translate(-60px, 40px) rotate(-10deg);
+  }
+  75% {
+    transform: translate(30px, 60px) rotate(10deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+
+/* ===== ABOUT SECTION ===== */
+.about {
+  background: #fff;
+  padding: 6rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.about-container {
+  max-width: 1100px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+
+.about-text {
+  flex: 1 1 450px;
+}
+
+.about-text h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #111;
+}
+
+.about-text p {
+  color: #444;
+  margin-bottom: 1rem;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.about-text .highlight {
+  background: #f0f6ff;
+  border-left: 4px solid #0077ff;
+  padding: 0.8rem 1rem;
+  border-radius: 6px;
+}
+
+.about-image {
+  flex: 1 1 400px;
+  display: flex;
+  justify-content: center;
+}
+
+.about-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* Responsive layout */
+@media (max-width: 900px) {
+  .about-container {
+    flex-direction: column;
+    text-align: center;
+  }
+  .about-text h2 {
+    font-size: 1.8rem;
+  }
+}
+
+/* ===== ABOUT SECTION ANIMATIONS ===== */
+.about-text,
+.about-image {
+  opacity: 0;
+  transition: opacity 1s ease, transform 1s ease;
+  will-change: transform, opacity;
+}
+
+/* Starting offsets */
+.about-text { transform: translateX(-80px); }
+.about-image { transform: translateX(80px); }
+
+/* When entering viewport */
+.about-text.visible,
+.about-image.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* When leaving viewport */
+.about-text.hidden,
+.about-image.hidden {
+  opacity: 0;
+}
+
+/* optional smoother easing */
+.about-text, .about-image {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+/* ===== TUTORS SECTION ===== */
+.tutors {
+  background: #f7f9fb;
+  padding: 6rem 2rem;
+  text-align: center;
+}
+
+.tutors-header {
+  max-width: 700px;
+  margin: 0 auto 3rem;
+}
+
+.tutors-header h2 {
+  font-size: 2rem;
+  color: #111;
+  margin-bottom: 1rem;
+}
+
+.tutors-header p {
+  color: #555;
+  line-height: 1.6;
+  font-size: 1.05rem;
+}
+
+.tutors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 2rem;
+  justify-items: center;
+}
+
+.tutor-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  transition: transform 0.3s, box-shadow 0.3s;
+  max-width: 320px;
+}
+
+.tutor-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.tutor-card img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 100px;
+  margin-bottom: 1rem;
+}
+
+.tutor-card h3 {
+  font-size: 1.3rem;
+  margin-bottom: 0.4rem;
+  color: #111;
+}
+
+.tutor-card .subject {
+  color: #0077ff;
+  font-weight: 600;
+  margin-bottom: 0.7rem;
+}
+
+.tutor-card .bio {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+}
+
+.book-btn {
+  display: inline-block;
+  background: #0077ff;
+  color: #fff;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+
+.book-btn:hover {
+  background: #005fcc;
+}
+
+/* ===== TUTORS SECTION ANIMATIONS ===== */
+.tutors-header,
+.tutors-grid {
+  opacity: 0;
+  transition: opacity 1s ease, transform 1s ease;
+  will-change: transform, opacity;
+}
+
+/* start positions */
+.tutors-header { transform: translateY(-60px); }  /* from top */
+.tutors-grid   { transform: translateY(60px); }   /* from bottom */
+
+/* visible (entering) */
+.tutors-header.visible,
+.tutors-grid.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* hidden (leaving) */
+.tutors-header.hidden,
+.tutors-grid.hidden {
+  opacity: 0;
+}
+
+/* optional easing for smoother motion */
+.tutors-header, .tutors-grid {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+/* ===== CONTACT SECTION ===== */
+.contact {
+  background: linear-gradient(to bottom right, #eef2f6, #f7f9fb);
+  padding: 6rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: left;
+}
+
+.contact-container {
+  max-width: 1000px;
+  width: 100%;
+  display: flex;
+  gap: 3rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.contact-text {
+  flex: 1 1 400px;
+}
+
+.contact-text h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #111;
+}
+
+.contact-text p {
+  color: #444;
+  margin-bottom: 1rem;
+  line-height: 1.7;
+  font-size: 1.05rem;
+}
+
+.contact-text .highlight {
+  background: #f0f6ff;
+  border-left: 4px solid #0077ff;
+  padding: 0.8rem 1rem;
+  border-radius: 6px;
+}
+
+/* Form */
+.contact-form {
+  flex: 1 1 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contact-form label {
+  font-weight: 600;
+  color: #222;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: #0077ff;
+  outline: none;
+}
+
+.submit-btn {
+  background: #0077ff;
+  color: #fff;
+  padding: 0.9rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.submit-btn:hover {
+  background: #005fcc;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .contact-container {
+    flex-direction: column;
+    text-align: center;
+  }
+  .contact-form {
+    width: 100%;
+  }
+}
+
+/* ===== CALENDLY CARD ===== */
+.calendly-card {
+  flex: 1 1 500px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;         /* keeps the rounded look clean */
+  padding: 1rem;
+  backdrop-filter: blur(8px);
+}
+
+/* Animate only if JS adds .is-visible; default is visible */
+.reveal-on-scroll {
+  transform: translateY(40px);
+  opacity: 1;               /* keep visible by default */
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal-on-scroll.is-visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.calendly-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Ensure the iframe has space */
+.calendly-inline-widget {
+  width: 100%;
+  height: 600px !important;
+  border: none;
+}
+
+@media (max-width: 900px) {
+  .calendly-inline-widget { height: 700px !important; }
+}
+
+/* ===== CONTACT SECTION ANIMATIONS ===== */
+.contact-text,
+.contact-form {
+  opacity: 0;
+  transform: translateY(60px);
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+.contact-text.visible,
+.contact-form.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.contact-text.hidden,
+.contact-form.hidden {
+  opacity: 0;
+}
+
+
+/* ===== FULL-SCREEN SCROLL FIX ===== */
+.scroll-container {
+  height: 100vh;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scroll-container > * {
+  min-height: 100vh;
+  scroll-snap-align: start;
+}
