@@ -109,6 +109,13 @@ html {
   width: 100%;
 }
 
+/* --- Nav Auth Container --- */
+.nav-auth {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 /* --- CTA Button --- */
 .cta-btn {
   background: transparent;
@@ -130,6 +137,62 @@ html {
 .navbar.scrolled .cta-btn:hover {
   background: #fff;
   color: #0077ff;
+}
+
+/* --- Auth Links --- */
+.auth-link {
+  text-decoration: none;
+  color: #111;
+  font-weight: 500;
+  padding: 0.6rem 1rem;
+  border-radius: 50px;
+  transition: color 0.3s ease, background 0.4s ease;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
+}
+.auth-link:hover {
+  background: rgba(0, 119, 255, 0.1);
+  color: #0077ff;
+}
+.navbar.scrolled .auth-link {
+  color: #fff;
+}
+.navbar.scrolled .auth-link:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+.signup-link {
+  background: #0077ff;
+  color: #fff !important;
+}
+.signup-link:hover {
+  background: #005fcc;
+  color: #fff !important;
+}
+.navbar.scrolled .signup-link {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff !important;
+}
+.navbar.scrolled .signup-link:hover {
+  background: #fff;
+  color: #0077ff !important;
+}
+.logout-link {
+  color: #ff3b30 !important;
+}
+.logout-link:hover {
+  background: rgba(255, 59, 48, 0.1);
+  color: #ff3b30 !important;
+}
+.navbar.scrolled .logout-link {
+  color: #ffcccc !important;
+}
+.navbar.scrolled .logout-link:hover {
+  background: rgba(255, 59, 48, 0.3);
+  color: #fff !important;
 }
 
 /* Responsive */
@@ -162,18 +225,56 @@ html {
   margin-bottom: 2rem;
 }
 
-.primary-btn {
-  display: inline-block;
-  background: #0077ff;
-  color: #fff;
-  padding: 0.8rem 1.6rem;
-  border-radius: 10px;
-  text-decoration: none;
-  transition: background 0.3s;
+/* Hero Classes Grid */
+.hero-classes {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
 }
 
-.primary-btn:hover {
-  background: #005fcc;
+.hero-class-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  min-width: 100px;
+  border: 2px solid transparent;
+}
+
+.hero-class-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  border-color: #0077ff;
+}
+
+.hero-class-icon {
+  font-size: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background: #f7f9fb;
+  border-radius: 50%;
+}
+
+.hero-class-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111;
+  text-align: center;
+}
+
+.hero-class-card:hover .hero-class-name {
+  color: #0077ff;
 }
 
 /* Responsive */
@@ -184,8 +285,31 @@ html {
   .cta-btn {
     display: none;
   }
+  .nav-auth {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .auth-link {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.8rem;
+  }
   .hero-content h1 {
     font-size: 2rem;
+  }
+  .hero-classes {
+    gap: 1rem;
+  }
+  .hero-class-card {
+    padding: 1rem 1.25rem;
+    min-width: 80px;
+  }
+  .hero-class-icon {
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+  }
+  .hero-class-name {
+    font-size: 0.9rem;
   }
 }
 
@@ -471,149 +595,242 @@ html {
 }
 
 
+/* ===== DISCIPLINES SECTION ===== */
+.disciplines {
+  background: #fff;
+  padding: 6rem 2rem;
+  text-align: center;
+}
+
+.disciplines-header {
+  max-width: 700px;
+  margin: 0 auto 3rem;
+}
+
+.disciplines-header h2 {
+  font-size: 2rem;
+  color: #111;
+  margin-bottom: 1rem;
+}
+
+.disciplines-header p {
+  color: #555;
+  line-height: 1.6;
+  font-size: 1.05rem;
+}
+
+.disciplines-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  justify-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.discipline-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  transition: transform 0.3s, box-shadow 0.3s;
+  max-width: 300px;
+  width: 100%;
+  border: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.discipline-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+  border-color: #0077ff;
+}
+
+.discipline-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  background: #f7f9fb;
+  border-radius: 50%;
+}
+
+.discipline-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #111;
+  font-weight: 700;
+}
+
+.discipline-description {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
+}
+
+.discipline-price {
+  color: #0077ff;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.discipline-card .book-btn {
+  width: 100%;
+  text-align: center;
+  padding: 0.8rem 1.5rem;
+}
+
+/* ===== DISCIPLINES SECTION ANIMATIONS ===== */
+.disciplines-header,
+.disciplines-grid {
+  opacity: 0;
+  transition: opacity 1s ease, transform 1s ease;
+  will-change: transform, opacity;
+}
+
+/* start positions */
+.disciplines-header { transform: translateY(-60px); }  /* from top */
+.disciplines-grid   { transform: translateY(60px); }   /* from bottom */
+
+/* visible (entering) */
+.disciplines-header.visible,
+.disciplines-grid.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* hidden (leaving) */
+.disciplines-header.hidden,
+.disciplines-grid.hidden {
+  opacity: 0;
+}
+
+/* optional easing for smoother motion */
+.disciplines-header, .disciplines-grid {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
 /* ===== CONTACT SECTION ===== */
 .contact {
-  background: linear-gradient(to bottom right, #eef2f6, #f7f9fb);
+  background: #f3f4f8;
   padding: 6rem 2rem;
   display: flex;
   justify-content: center;
-  align-items: center;
-  text-align: left;
 }
 
-.contact-container {
-  max-width: 1000px;
+.contact-wrapper {
+  max-width: 1100px;
   width: 100%;
+}
+
+.contact-title {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 3rem;
+}
+
+/* Two-column layout (info + “form” card) */
+.contact-grid {
   display: flex;
   gap: 3rem;
+  align-items: stretch;
   flex-wrap: wrap;
-  align-items: flex-start;
 }
 
-.contact-text {
-  flex: 1 1 400px;
-}
-
-.contact-text h2 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  color: #111;
-}
-
-.contact-text p {
-  color: #444;
-  margin-bottom: 1rem;
-  line-height: 1.7;
-  font-size: 1.05rem;
-}
-
-.contact-text .highlight {
-  background: #f0f6ff;
-  border-left: 4px solid #0077ff;
-  padding: 0.8rem 1rem;
-  border-radius: 6px;
-}
-
-/* Form */
-.contact-form {
-  flex: 1 1 400px;
+/* LEFT COLUMN – info list */
+.contact-info {
+  flex: 0 0 260px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
-.contact-form label {
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+}
+
+.info-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  background: rgba(0, 119, 255, 0.08);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  color: #0077ff;
+}
+
+.info-title {
   font-weight: 600;
-  color: #222;
+  color: #111;
+  margin-bottom: 0.15rem;
 }
 
-.contact-form input,
-.contact-form textarea {
-  padding: 0.8rem 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-  transition: border-color 0.2s;
+.info-detail {
+  font-size: 0.9rem;
+  color: #555;
 }
 
-.contact-form input:focus,
-.contact-form textarea:focus {
-  border-color: #0077ff;
-  outline: none;
-}
-
-.submit-btn {
-  background: #0077ff;
-  color: #fff;
-  padding: 0.9rem 1.5rem;
-  border: none;
-  border-radius: 10px;
-  font-size: 1.05rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.submit-btn:hover {
-  background: #005fcc;
-}
-
-/* Responsive */
-@media (max-width: 900px) {
-  .contact-container {
-    flex-direction: column;
-    text-align: center;
-  }
-  .contact-form {
-    width: 100%;
-  }
-}
-
-/* ===== CALENDLY CARD ===== */
-.calendly-card {
-  flex: 1 1 500px;
-  background: rgba(255, 255, 255, 0.9);
+/* RIGHT COLUMN – card with Calendly widget (styled like form) */
+.contact-card {
+  flex: 1 1 360px;
+  background: #ffffff;
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  overflow: hidden;         /* keeps the rounded look clean */
-  padding: 1rem;
-  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  padding: 1.75rem 1.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Animate only if JS adds .is-visible; default is visible */
-.reveal-on-scroll {
-  transform: translateY(40px);
-  opacity: 1;               /* keep visible by default */
-  transition: opacity 0.7s ease, transform 0.7s ease;
+.contact-card-header {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #111;
+  margin-bottom: 1rem;
 }
 
-.reveal-on-scroll.is-visible {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-.calendly-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
-}
-
-/* Ensure the iframe has space */
+/* Calendly iframe */
 .calendly-inline-widget {
   width: 100%;
-  height: 600px !important;
+  height: 520px !important;
   border: none;
 }
 
+/* tablet / mobile */
 @media (max-width: 900px) {
-  .calendly-inline-widget { height: 700px !important; }
+  .contact-grid {
+    flex-direction: column;
+  }
+
+  .contact-info {
+    flex-basis: auto;
+  }
+
+  .calendly-inline-widget {
+    height: 640px !important;
+  }
 }
 
 /* ===== CONTACT SECTION ANIMATIONS ===== */
 .contact-text,
 .contact-form {
   opacity: 0;
-  transform: translateY(60px);
-  transition: opacity 1s ease, transform 1s ease;
+  transform: translateY(40px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
 }
 
 .contact-text.visible,
@@ -627,6 +844,17 @@ html {
   opacity: 0;
 }
 
+/* Reveal-on-scroll (already used for the card) */
+.reveal-on-scroll {
+  transform: translateY(40px);
+  opacity: 1;
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal-on-scroll.is-visible {
+  transform: translateY(0);
+  opacity: 1;
+}
 
 /* ===== FULL-SCREEN SCROLL FIX ===== */
 .scroll-container {

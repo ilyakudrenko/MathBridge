@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Class Details - Core School</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .class-detail-container {
+      min-height: 100vh;
+      background: #f7f9fb;
+      padding: 2rem;
+    }
+
+    .class-detail-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #0077ff;
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      transition: color 0.3s;
+    }
+
+    .back-link:hover {
+      color: #005fcc;
+    }
+
+    .class-header {
+      margin-bottom: 2rem;
+    }
+
+    .class-name {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 1.5rem;
+    }
+
+    .class-description-box {
+      border: 2px solid #0077ff;
+      border-radius: 12px;
+      padding: 2rem;
+      background: #fff;
+      margin-bottom: 1.5rem;
+      min-height: 150px;
+    }
+
+    .class-description {
+      color: #444;
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+
+    .class-price {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #0077ff;
+      margin-bottom: 3rem;
+    }
+
+    .available-tutors-section {
+      border: 2px solid #111;
+      border-radius: 12px;
+      padding: 2rem;
+      background: #fff;
+    }
+
+    .available-tutors-header {
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #111;
+    }
+
+    .tutors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .tutor-card-detail {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem;
+      background: #f7f9fb;
+      border-radius: 12px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .tutor-card-detail:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .tutor-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin-bottom: 1rem;
+      border: 2px solid #ddd;
+      overflow: hidden;
+    }
+    
+    .tutor-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .tutor-avatar-icon {
+      font-size: 3rem;
+      color: #999;
+    }
+
+    .tutor-heart {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      font-size: 1.2rem;
+      color: #ff3b30;
+    }
+
+    .tutor-name {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #111;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .enroll-btn {
+      background: transparent;
+      color: #0077ff;
+      border: 2px solid #0077ff;
+      padding: 0.6rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s;
+      text-align: center;
+      width: 100%;
+    }
+
+    .enroll-btn:hover {
+      background: #0077ff;
+      color: #fff;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: #555;
+    }
+
+    @media (max-width: 768px) {
+      .class-name {
+        font-size: 2rem;
+      }
+      .tutors-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="class-detail-container">
+    <div class="class-detail-content">
+      <a href="index.html#disciplines" class="back-link">← Back to Classes</a>
+      
+      <div id="loading" class="loading">Loading class information...</div>
+      
+      <div id="classContent" style="display: none;">
+        <div class="class-header">
+          <h1 class="class-name" id="className">Class Name</h1>
+          
+          <div class="class-description-box">
+            <p class="class-description" id="classDescription">description...</p>
+          </div>
+          
+          <div class="class-price" id="classPrice">$ Price</div>
+        </div>
+
+        <div class="available-tutors-section">
+          <h2 class="available-tutors-header">Available Tutors</h2>
+          <div class="tutors-grid" id="tutorsGrid">
+            <!-- Tutor cards will be inserted here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Class data
+    const classesData = {
+      'mathematics': {
+        name: 'Mathematics',
+        description: 'Master algebra, calculus, geometry, and more with personalized tutoring sessions tailored to your learning style. Our comprehensive math program covers everything from basic arithmetic to advanced calculus, ensuring you build a strong foundation and excel in your studies.',
+        price: '$50/session',
+        tutors: [
+          { name: 'Ilya Kudrenko', image: 'img/ilya.jpg' },
+          { name: 'Nicholas Chuprynskyi', image: 'img/kolya.jpeg' }
+        ]
+      },
+      'biology': {
+        name: 'Biology',
+        description: 'Dive deep into cellular biology, genetics, ecology, and anatomy with expert guidance and interactive learning. Our biology program helps you understand the living world through hands-on experiments, detailed explanations, and real-world applications.',
+        price: '$50/session',
+        tutors: [
+          { name: 'Ilya Kudrenko', image: 'img/ilya.jpg' },
+          { name: 'Nicholas Chuprynskyi', image: 'img/kolya.jpeg' }
+        ]
+      },
+      'ai': {
+        name: 'Artificial Intelligence',
+        description: 'Learn machine learning, neural networks, and AI fundamentals with hands-on projects and real-world applications. Our AI program covers everything from basic concepts to advanced techniques, preparing you for a career in this cutting-edge field.',
+        price: '$60/session',
+        tutors: [
+          { name: 'Ilya Kudrenko', image: 'img/ilya.jpg' },
+          { name: 'Nicholas Chuprynskyi', image: 'img/kolya.jpeg' }
+        ]
+      },
+      'computer-science': {
+        name: 'Computer Science',
+        description: 'Build programming skills, understand algorithms, data structures, and software engineering principles. Our comprehensive CS program covers multiple programming languages, software development practices, and computer science fundamentals.',
+        price: '$55/session',
+        tutors: [
+          { name: 'Ilya Kudrenko', image: 'img/ilya.jpg' },
+          { name: 'Nicholas Chuprynskyi', image: 'img/kolya.jpeg' }
+        ]
+      }
+    };
+
+    // Get class parameter from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const classId = urlParams.get('class') || 'mathematics';
+
+    // Load class data
+    function loadClassData() {
+      const classData = classesData[classId];
+      
+      if (!classData) {
+        document.getElementById('loading').textContent = 'Class not found.';
+        return;
+      }
+
+      // Update class information
+      document.getElementById('className').textContent = classData.name;
+      document.getElementById('classDescription').textContent = classData.description;
+      document.getElementById('classPrice').textContent = classData.price;
+
+      // Render tutors
+      const tutorsGrid = document.getElementById('tutorsGrid');
+      tutorsGrid.innerHTML = '';
+
+      classData.tutors.forEach(tutor => {
+        const tutorCard = document.createElement('div');
+        tutorCard.className = 'tutor-card-detail';
+        
+        // Check if image exists, otherwise use placeholder
+        const hasImage = tutor.image && tutor.image !== '';
+        const avatarContent = hasImage 
+          ? `<img src="${tutor.image}" alt="${tutor.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`
+          : '<span class="tutor-avatar-icon">👤</span>';
+        
+        tutorCard.innerHTML = `
+          <div class="tutor-avatar">
+            <span class="tutor-heart">❤️</span>
+            ${avatarContent}
+          </div>
+          <div class="tutor-name">${tutor.name}</div>
+          <a href="index.html#contact" class="enroll-btn">Enroll</a>
+        `;
+        
+        tutorsGrid.appendChild(tutorCard);
+      });
+
+      // Show content
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('classContent').style.display = 'block';
+    }
+
+    // Load on page load
+    loadClassData();
+  </script>
+</body>
+</html>
+

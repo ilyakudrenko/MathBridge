@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MathBridge Tutoring</title>
+  <title>Core School</title>
   <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
 </head>
@@ -12,25 +12,106 @@
   <!-- ===== HERO SECTION ===== -->
   <header class="hero" id="top">
     <nav class="navbar">
-      <div class="logo"><a href="#top" class="logo" style="text-decoration: none;">MathBridge</a></div>
+      <div class="logo"><a href="#top" class="logo" style="text-decoration: none;">Core School</a></div>
       <ul class="nav-links">
+        <li><a href="#disciplines">Classes</a></li>
         <li><a href="#about">About</a></li>
         <li><a href="#tutors">Tutors</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
-      <a href="#contact" class="cta-btn">Book a Session</a>
+      <div class="nav-auth">
+        <span id="authLinks">
+          <a href="login.html" class="auth-link" id="loginLink">Login</a>
+          <a href="signup.html" class="auth-link signup-link" id="signupLink">Sign Up</a>
+        </span>
+        <span id="userLinks" style="display: none;">
+          <a href="profile.html" class="auth-link" id="profileLink">My Profile</a>
+          <!-- <button class="auth-link logout-link" id="logoutLink">Logout</button> -->
+        </span>
+      </div>
     </nav>
 
 
     <div class="hero-content">
       <h1>Personalized Online Math Tutoring</h1>
       <p>Get 1-on-1 help from experienced tutors — learn smarter, not harder.</p>
-      <a href="#contact" class="primary-btn">Book a Tutoring Session</a>
+      <div class="hero-classes">
+        <a href="class.html?class=mathematics" class="hero-class-card">
+          <div class="hero-class-icon">📐</div>
+          <div class="hero-class-name">Math</div>
+        </a>
+        <a href="class.html?class=biology" class="hero-class-card">
+          <div class="hero-class-icon">🔬</div>
+          <div class="hero-class-name">Biology</div>
+        </a>
+        <a href="class.html?class=ai" class="hero-class-card">
+          <div class="hero-class-icon">🤖</div>
+          <div class="hero-class-name">AI</div>
+        </a>
+        <a href="class.html?class=computer-science" class="hero-class-card">
+          <div class="hero-class-icon">💻</div>
+          <div class="hero-class-name">CS</div>
+        </a>
+      </div>
     </div>
 
    <div class="floating-math" id="floatingMath"></div>
 
   </header>
+
+
+<!-- ===== DISCIPLINES SECTION ===== -->
+<section id="disciplines" class="disciplines">
+  <div class="disciplines-header">
+    <h2>Our Classes</h2>
+    <p>
+      Explore our range of subjects designed to help you excel in your studies — from mathematics to cutting-edge AI.
+    </p>
+  </div>
+
+  <div class="disciplines-grid">
+    <!-- Math -->
+    <div class="discipline-card">
+      <div class="discipline-icon">📐</div>
+      <h3>Mathematics</h3>
+      <p class="discipline-description">
+        Master algebra, calculus, geometry, and more with personalized tutoring sessions tailored to your learning style.
+      </p>
+      <!-- <div class="discipline-price">Starting at $50/session</div> -->
+      <a href="class.html?class=mathematics" class="book-btn">Enroll Now</a>
+    </div>
+
+    <!-- Biology -->
+    <div class="discipline-card">
+      <div class="discipline-icon">🔬</div>
+      <h3>Biology</h3>
+      <p class="discipline-description">
+        Dive deep into cellular biology, genetics, ecology, and anatomy with expert guidance and interactive learning.
+      </p>
+      <a href="class.html?class=biology" class="book-btn">Enroll Now</a>
+    </div>
+
+    <!-- AI -->
+    <div class="discipline-card">
+      <div class="discipline-icon">🤖</div>
+      <h3>Artificial Intelligence</h3>
+      <p class="discipline-description">
+        Learn machine learning, neural networks, and AI fundamentals with hands-on projects and real-world applications.
+      </p>
+      <a href="class.html?class=ai" class="book-btn">Enroll Now</a>
+    </div>
+
+    <!-- Computer Science -->
+    <div class="discipline-card">
+      <div class="discipline-icon">💻</div>
+      <h3>Computer Science</h3>
+      <p class="discipline-description">
+        Build programming skills, understand algorithms, data structures, and software engineering principles.
+      </p>
+      <a href="class.html?class=computer-science" class="book-btn">Enroll Now</a>
+    </div>
+  </div>
+</section>
 
 
   <!-- ===== ABOUT SECTION ===== -->
@@ -93,32 +174,56 @@
   </section>
 
 
-  <!-- ===== CONTACT SECTION ===== -->
-<section id="contact" class="contact">
-  <div class="contact-container">
-    <div class="contact-text">
-      <h2>Get in Touch</h2>
-      <p>
-        Have questions or want to book a free trial?  
-        Pick a time below and one of our tutors will reach out to you.
-      </p>
-      <p class="highlight">
-        We currently offer <strong>1-on-1 online math tutoring</strong> sessions
-        with personalized lesson plans tailored to your goals.
-      </p>
-    </div>
 
-    <!-- Calendly wrapped inside white card -->
-    <div class="calendly-card reveal-on-scroll">
-  <div
-    class="calendly-inline-widget"
-    data-url="https://calendly.com/ilya-kudrenko/30min?hide_gdpr_banner=1"
-    style="min-width:320px;height:800px;"
-  ></div>
-</div>
-</section>
-<!-- Calendly script must be after the section -->
-<script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+  <!-- ===== CONTACT SECTION ===== -->
+  <section id="contact" class="contact">
+    <div class="contact-wrapper">
+      <h2 class="contact-title">Contact Us</h2>
+
+      <div class="contact-grid">
+        <!-- LEFT SIDE: CONTACT INFO -->
+        <div class="contact-info contact-text">
+          <div class="info-item">
+            <div class="info-icon">📞</div>
+            <div>
+              <div class="info-title">Call</div>
+              <div class="info-detail">+1 (555) 123-4567</div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-icon">✉️</div>
+            <div>
+              <div class="info-title">Email</div>
+              <div class="info-detail">mathbridge.tutoring@example.com</div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-icon">📍</div>
+            <div>
+              <div class="info-title">Location</div>
+              <div class="info-detail">Online • Based in Boston, MA</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT SIDE: “FORM” CARD WITH CALENDLY -->
+        <div class="contact-card contact-form reveal-on-scroll">
+          <p class="contact-card-header">
+            Book a 1-on-1 meeting with us
+          </p>
+          <div
+            class="calendly-inline-widget"
+            data-url="https://calendly.com/ilya-kudrenko/30min?hide_gdpr_banner=1"
+            style="min-width:320px;height:560px;"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Calendly script must be after the section -->
+  <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 
 </main>
 </body>
@@ -312,6 +417,26 @@ tutorsObserver.observe(tutorsHeader);
 tutorsObserver.observe(tutorsGrid);
 
 
+// Animate Disciplines section (enter + exit)
+const disciplinesHeader = document.querySelector('.disciplines-header');
+const disciplinesGrid = document.querySelector('.disciplines-grid');
+
+const disciplinesObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      entry.target.classList.remove('hidden');
+    } else {
+      entry.target.classList.add('hidden');
+      entry.target.classList.remove('visible');
+    }
+  });
+}, { threshold: 0.3 });
+
+disciplinesObserver.observe(disciplinesHeader);
+disciplinesObserver.observe(disciplinesGrid);
+
+
 // Animate Contact section (enter + exit)
 const contactText = document.querySelector('.contact-text');
 const contactForm = document.querySelector('.contact-form');
@@ -354,6 +479,43 @@ const revealObserver = new IntersectionObserver(
 );
 
 revealEls.forEach((el) => revealObserver.observe(el));
+
+// ===== AUTHENTICATION STATE =====
+const authLinks = document.getElementById('authLinks');
+const userLinks = document.getElementById('userLinks');
+const logoutLink = document.getElementById('logoutLink');
+const profileLink = document.getElementById('profileLink');
+
+// Check if user is logged in
+const token = localStorage.getItem('token');
+const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+if (token) {
+  authLinks.style.display = 'none';
+  userLinks.style.display = 'flex';
+  userLinks.style.gap = '0.5rem';
+  userLinks.style.alignItems = 'center';
+  
+  // Update profile link for admins
+  if (user.isAdmin && profileLink) {
+    profileLink.href = 'admin.html';
+    profileLink.textContent = 'Admin Panel';
+  }
+} else {
+  authLinks.style.display = 'flex';
+  authLinks.style.gap = '0.5rem';
+  authLinks.style.alignItems = 'center';
+  userLinks.style.display = 'none';
+}
+
+// Handle logout
+if (logoutLink) {
+  logoutLink.addEventListener('click', () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.reload();
+  });
+}
 </script>
 
 </html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up - MathBridge Tutoring</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .auth-container {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(to bottom right, #f7f9fb, #e9eef4);
+      padding: 2rem;
+    }
+    .auth-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 3rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      max-width: 450px;
+      width: 100%;
+    }
+    .auth-card h2 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: #111;
+      text-align: center;
+    }
+    .auth-card p {
+      text-align: center;
+      color: #555;
+      margin-bottom: 2rem;
+    }
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    .auth-form label {
+      font-weight: 600;
+      color: #222;
+      font-size: 0.95rem;
+    }
+    .auth-form input {
+    width: 100%;                
+    padding: 0.9rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+  }
+    .auth-form input:focus {
+      border-color: #0077ff;
+      outline: none;
+    }
+    .auth-btn {
+      background: #0077ff;
+      color: #fff;
+      padding: 0.9rem 1.5rem;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-top: 0.5rem;
+    }
+    .auth-btn:hover {
+      background: #005fcc;
+    }
+    .auth-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .error-message {
+      background: #fee;
+      color: #c33;
+      padding: 0.8rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .error-message.show {
+      display: block;
+    }
+    .success-message {
+      background: #efe;
+      color: #3c3;
+      padding: 0.8rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .success-message.show {
+      display: block;
+    }
+    .auth-links {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #555;
+    }
+    .auth-links a {
+      color: #0077ff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .auth-links a:hover {
+      text-decoration: underline;
+    }
+    .back-home {
+      position: absolute;
+      top: 2rem;
+      left: 2rem;
+      color: #0077ff;
+      text-decoration: none;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .back-home:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <a href="index.html" class="back-home">← Back to Home</a>
+    <div class="auth-card">
+      <h2>Create Account</h2>
+      <p>Join MathBridge and start your learning journey</p>
+      
+      <div class="error-message" id="errorMessage"></div>
+      <div class="success-message" id="successMessage"></div>
+      
+      <form class="auth-form" id="signupForm">
+        <div>
+          <!-- <label for="firstName">First Name</label> -->
+          <input type="text" id="firstName" name="firstName" autocomplete="given-name" placeholder="Enter your first name"/>
+        </div>
+        <div>
+          <!-- <label for="lastName">Last Name</label> -->
+          <input type="text" id="lastName" name="lastName" autocomplete="family-name" placeholder="Enter your last name"/>
+        </div>
+        <div>
+          <!-- <label for="email">Email *</label> -->
+          <input type="email" id="email" name="email" required autocomplete="email" placeholder="Enter your email"/>
+        </div>
+        <div>
+          <!-- <label for="phone">Phone (optional)</label> -->
+          <input type="tel" id="phone" name="phone" autocomplete="tel" placeholder="Enter your phone number (optional)"/>
+        </div>
+        <div>
+          <!-- <label for="password">Password *</label> -->
+          <input type="password" id="password" name="password" required autocomplete="new-password" minlength="6" placeholder="Enter your password"/>
+        </div>
+        <button type="submit" class="auth-btn" id="submitBtn">Sign Up</button>
+      </form>
+      
+      <div class="auth-links">
+        <p>Already have an account? <a href="login.html">Login</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Check if user is already logged in
+    if (localStorage.getItem('token')) {
+      window.location.href = 'profile.html';
+    }
+
+    const signupForm = document.getElementById('signupForm');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+    const submitBtn = document.getElementById('submitBtn');
+
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const firstName = document.getElementById('firstName').value;
+      const lastName = document.getElementById('lastName').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      const password = document.getElementById('password').value;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Creating account...';
+      errorMessage.classList.remove('show');
+      successMessage.classList.remove('show');
+
+      try {
+        const response = await fetch('http://localhost:3000/api/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password, firstName, lastName, phone }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Store token and user info
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          
+          // Show success message and redirect
+          successMessage.textContent = 'Account created successfully! Redirecting...';
+          successMessage.classList.add('show');
+          
+          setTimeout(() => {
+            window.location.href = 'profile.html';
+          }, 1500);
+        } else {
+          errorMessage.textContent = data.error || 'Sign up failed';
+          errorMessage.classList.add('show');
+        }
+      } catch (error) {
+        errorMessage.textContent = 'Network error. Please try again.';
+        errorMessage.classList.add('show');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign Up';
+      }
+    });
+  </script>
+</body>
+</html>
+
+
+

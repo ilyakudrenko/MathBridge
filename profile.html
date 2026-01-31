@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile - MathBridge Tutoring</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+    }
+
+    .profile-layout {
+      display: flex;
+      min-height: 100vh;
+      gap: 2rem;
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Left Sidebar */
+    .sidebar {
+      width: 280px;
+      background: #fff;
+      border-radius: 16px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #999;
+      border: 2px solid #ddd;
+    }
+
+    .user-name {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #111;
+    }
+
+    .payment-section {
+      margin-top: auto;
+      margin-bottom: 1rem;
+      padding: 1.2rem 1.4rem;
+      border-radius: 16px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .payment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .payment-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .payment-card-icon {
+      width: 40px;
+      height: 26px;
+      border-radius: 8px;
+      border: 2px solid #d1d5db;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .payment-card-icon::before {
+      content: "";
+      position: absolute;
+      left: 6px;
+      right: 6px;
+      top: 8px;
+      height: 2px;
+      background: #d1d5db;
+      border-radius: 999px;
+    }
+
+    .payment-balance {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .payment-amount {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #111827;
+      line-height: 1;
+    }
+
+    .payment-caption {
+      font-size: 0.82rem;
+      color: #6b7280;
+    }
+
+    .payment-btn {
+      align-self: flex-start;
+      margin-top: 0.4rem;
+      padding: 0.35rem 1.2rem;
+      border-radius: 999px;
+      border: 1.5px solid #22c55e;
+      background: #ffffff;
+      color: #15803d;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .payment-btn:hover {
+      background: #22c55e;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25);
+    }
+
+    .logout-btn {
+      background: #ff3b30;
+      color: #fff;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+      width: 100%;
+      margin-top: auto;
+    }
+
+    .logout-btn:hover {
+      background: #d32f2f;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .settings-btn {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 500;
+      transition: background 0.3s;
+    }
+
+    .settings-btn:hover {
+      background: #f5f5f5;
+    }
+
+    .currency-display {
+      background: #4caf50;
+      color: #fff;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Section Cards */
+    .section-card {
+      background: #fff;
+      border: 2px solid #2196f3;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #111;
+    }
+
+    .section-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .edit-icon {
+      width: 20px;
+      height: 20px;
+      color: #2196f3;
+      cursor: pointer;
+    }
+
+    /* Classes Grid */
+    .classes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .class-card {
+      background: #f7f9fb;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .class-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      border-color: #2196f3;
+    }
+
+    .class-card-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .class-card-name {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #111;
+      margin-bottom: 0.5rem;
+    }
+
+    .class-card-tutor {
+      font-size: 0.95rem;
+      color: #666;
+    }
+
+    .add-class-btn {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #2196f3;
+      color: #fff;
+      border: none;
+      font-size: 2.5rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+      margin: 0 auto;
+    }
+
+    .add-class-btn:hover {
+      background: #1976d2;
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+    }
+
+    .plus-icon {
+      line-height: 1;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      overflow: auto;
+    }
+
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: #fff;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .modal-header h2 {
+      font-size: 1.5rem;
+      color: #111;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 2rem;
+      color: #666;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close:hover {
+      color: #111;
+    }
+
+    .modal-body {
+      padding: 2rem;
+    }
+
+    .modal-class-item {
+      background: #f7f9fb;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .modal-class-item:hover {
+      border-color: #2196f3;
+      transform: translateX(4px);
+    }
+
+    .modal-class-icon {
+      font-size: 2.5rem;
+    }
+
+    .modal-class-info {
+      flex: 1;
+    }
+
+    .modal-class-name {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #111;
+      margin-bottom: 0.25rem;
+    }
+
+    .modal-class-desc {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: #555;
+    }
+
+    .message {
+      padding: 0.8rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.success {
+      background: #efe;
+      color: #3c3;
+    }
+
+    .message.error {
+      background: #fee;
+      color: #c33;
+    }
+
+    @media (max-width: 968px) {
+      .profile-layout {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-layout">
+    <!-- Left Sidebar -->
+    <div class="sidebar">
+      <div class="user-profile">
+        <div class="avatar" id="userAvatar">👤</div>
+        <div>
+          <div class="user-name" id="userName">Name</div>
+        </div>
+      </div>
+
+      <div class="payment-section">
+        <div class="payment-header">
+          <span class="payment-title">Payment info</span>
+          <div class="payment-card-icon"></div>
+        </div>
+
+        <div class="payment-balance">
+          <div class="payment-amount">
+            $<span id="sidebarBalance">65</span>
+          </div>
+          <div class="payment-caption">on balance</div>
+        </div>
+
+        <button class="payment-btn" type="button">
+          Replenish
+        </button>
+      </div>
+
+      <button class="logout-btn" id="logoutBtn">Log out</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- My Classes Section -->
+      <div class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <span class="section-icon">📚</span>
+            <span>My Classes</span>
+          </div>
+        </div>
+        
+        <div id="classesContainer">
+          <div class="loading" id="classesLoading">Loading classes...</div>
+          <div id="classesContent" style="display: none;">
+            <div id="classesGrid" class="classes-grid"></div>
+            <button class="add-class-btn" id="addClassBtn">
+              <span class="plus-icon">+</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Class Selection Modal -->
+    <div id="classModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Select a Class</h2>
+          <button class="modal-close" id="modalClose">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody">
+          <!-- Available classes will be inserted here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Check authentication
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    
+    if (!token) {
+      window.location.href = 'login.html';
+    }
+    
+    // Redirect admins to admin panel
+    if (user.isAdmin) {
+      window.location.href = 'admin.html';
+    }
+
+    // Available classes data
+    const availableClasses = {
+      'mathematics': { name: 'Mathematics', icon: '📐', description: 'Master algebra, calculus, geometry, and more' },
+      'biology': { name: 'Biology', icon: '🔬', description: 'Dive deep into cellular biology, genetics, and ecology' },
+      'ai': { name: 'Artificial Intelligence', icon: '🤖', description: 'Learn machine learning and AI fundamentals' },
+      'computer-science': { name: 'Computer Science', icon: '💻', description: 'Build programming skills and algorithms' }
+    };
+
+    // Load user profile and classes
+    async function loadProfile() {
+      try {
+        const profileResponse = await fetch('http://localhost:3000/api/profile', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        const profileData = await profileResponse.json();
+
+        if (profileResponse.ok) {
+          const user = profileData.user;
+          const fullName = user.firstName && user.lastName 
+            ? `${user.firstName} ${user.lastName}` 
+            : user.firstName || user.lastName || user.email.split('@')[0];
+          
+          document.getElementById('userName').textContent = fullName;
+          
+          // Set avatar initial
+          const avatar = document.getElementById('userAvatar');
+          if (user.firstName) {
+            avatar.textContent = user.firstName.charAt(0).toUpperCase();
+          }
+        }
+
+        // Load user classes
+        await loadClasses();
+      } catch (error) {
+        console.error('Error loading profile:', error);
+      }
+    }
+
+    // Load user's enrolled classes
+    async function loadClasses() {
+      try {
+        const response = await fetch('http://localhost:3000/api/user-classes', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          renderClasses(data.classes || []);
+        } else {
+          document.getElementById('classesLoading').textContent = 'Error loading classes';
+        }
+      } catch (error) {
+        document.getElementById('classesLoading').textContent = 'Network error';
+      }
+    }
+
+    // Render enrolled classes
+    function renderClasses(classes) {
+      const classesGrid = document.getElementById('classesGrid');
+      classesGrid.innerHTML = '';
+
+      if (classes.length === 0) {
+        classesGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #999; padding: 2rem;">No classes enrolled yet</div>';
+      } else {
+        classes.forEach(userClass => {
+          const classData = availableClasses[userClass.classId] || { name: userClass.className, icon: '📚', description: '' };
+          const classCard = document.createElement('div');
+          classCard.className = 'class-card';
+          classCard.onclick = () => window.location.href = `class.html?class=${userClass.classId}`;
+          
+          classCard.innerHTML = `
+            <span class="class-card-icon">${classData.icon}</span>
+            <div class="class-card-name">${classData.name}</div>
+            <div class="class-card-tutor">Tutor</div>
+          `;
+          
+          classesGrid.appendChild(classCard);
+        });
+      }
+
+      document.getElementById('classesLoading').style.display = 'none';
+      document.getElementById('classesContent').style.display = 'block';
+    }
+
+    // Open class selection modal
+    document.getElementById('addClassBtn').addEventListener('click', () => {
+      openClassModal();
+    });
+
+    // Open modal with available classes
+    function openClassModal() {
+      const modal = document.getElementById('classModal');
+      const modalBody = document.getElementById('modalBody');
+      modalBody.innerHTML = '';
+
+      // Get enrolled class IDs
+      const enrolledClassIds = Array.from(document.querySelectorAll('.class-card')).map(() => {
+        // Extract classId from card if needed
+        return '';
+      });
+
+      Object.entries(availableClasses).forEach(([classId, classData]) => {
+        const classItem = document.createElement('div');
+        classItem.className = 'modal-class-item';
+        classItem.onclick = () => selectClass(classId, classData.name);
+        
+        classItem.innerHTML = `
+          <span class="modal-class-icon">${classData.icon}</span>
+          <div class="modal-class-info">
+            <div class="modal-class-name">${classData.name}</div>
+            <div class="modal-class-desc">${classData.description}</div>
+          </div>
+        `;
+        
+        modalBody.appendChild(classItem);
+      });
+
+      modal.classList.add('active');
+    }
+
+    // Close modal
+    document.getElementById('modalClose').addEventListener('click', () => {
+      document.getElementById('classModal').classList.remove('active');
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+      const modal = document.getElementById('classModal');
+      if (e.target === modal) {
+        modal.classList.remove('active');
+      }
+    });
+
+    // Select class and enroll
+    async function selectClass(classId, className) {
+      try {
+        const response = await fetch('http://localhost:3000/api/user-classes', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ classId, className }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Close modal and redirect to class page
+          document.getElementById('classModal').classList.remove('active');
+          window.location.href = `class.html?class=${classId}`;
+        } else {
+          alert(data.error || 'Error enrolling in class');
+        }
+      } catch (error) {
+        alert('Network error. Please try again.');
+      }
+    }
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = 'index.html';
+    });
+
+    // Load profile on page load
+    loadProfile();
+  </script>
+</body>
+</html>
