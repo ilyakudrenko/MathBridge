@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Core School</title>
+  <title>Core School – Online tutoring in Math, Biology, AI &amp; CS</title>
+  <meta name="description" content="Core School offers personalized 1-on-1 online tutoring in Mathematics, Biology, Artificial Intelligence, and Computer Science. Choose a subject, pick a tutor, and book a session." />
   <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
 </head>
@@ -11,13 +12,15 @@
   <main class="scroll-container">
   <!-- ===== HERO SECTION ===== -->
   <header class="hero" id="top">
-    <nav class="navbar">
+    <nav class="navbar" id="mainNav">
       <div class="logo"><a href="#top" class="logo" style="text-decoration: none;">Core School</a></div>
+      <button type="button" class="nav-menu-btn" aria-label="Toggle menu" id="navMenuBtn"><span class="icon"><span></span><span></span><span></span></span></button>
       <ul class="nav-links">
         <li><a href="#disciplines">Classes</a></li>
+        <li><a href="#how-it-works">How it works</a></li>
         <li><a href="#about">About</a></li>
         <li><a href="#tutors">Tutors</a></li>
-        <li><a href="#contact">Contact</a></li>
+        <li><a href="#faq">FAQ</a></li>
       </ul>
       <div class="nav-auth">
         <span id="authLinks">
@@ -35,6 +38,14 @@
     <div class="hero-content">
       <h1>Personalized Online Tutoring</h1>
       <p>Get 1-on-1 help from experienced tutors — learn smarter, not harder.</p>
+      <p class="hero-credibility">4 subjects · Experienced tutors · 1-on-1 sessions</p>
+      <div class="hero-steps" id="heroSteps">
+        <div class="hero-step"><span class="hero-step-num">1</span><span class="hero-step-label">Choose a subject</span></div>
+        <span class="hero-step-arrow" aria-hidden="true">→</span>
+        <div class="hero-step"><span class="hero-step-num">2</span><span class="hero-step-label">Pick a tutor</span></div>
+        <span class="hero-step-arrow" aria-hidden="true">→</span>
+        <div class="hero-step"><span class="hero-step-num">3</span><span class="hero-step-label">Book and learn</span></div>
+      </div>
       <div class="hero-classes">
         <a href="class.html?class=mathematics" class="hero-class-card">
           <div class="hero-class-icon">📐</div>
@@ -114,6 +125,32 @@
 </section>
 
 
+  <!-- ===== HOW IT WORKS ===== -->
+  <section id="how-it-works" class="how-it-works">
+    <div class="how-it-works-header">
+      <h2>How it works</h2>
+      <p>Three simple steps to start learning with Core School.</p>
+    </div>
+    <div class="how-it-works-steps">
+      <div class="how-step">
+        <span class="how-step-num">1</span>
+        <h3>Choose a subject</h3>
+        <p>Pick Math, Biology, AI, or Computer Science — we’ll show you tutors for that subject.</p>
+      </div>
+      <div class="how-step">
+        <span class="how-step-num">2</span>
+        <h3>Pick a tutor</h3>
+        <p>Browse profiles, ratings, and pitches. Choose the tutor that fits you best.</p>
+      </div>
+      <div class="how-step">
+        <span class="how-step-num">3</span>
+        <h3>Book and learn</h3>
+        <p>Pick a time, enroll with credits, and meet your tutor online for a 1-on-1 session.</p>
+      </div>
+    </div>
+    <p class="credibility-strip">4 subjects · Experienced tutors · 1-on-1 sessions</p>
+  </section>
+
   <!-- ===== ABOUT SECTION ===== -->
   <section id="about" class="about">
     <div class="about-container">
@@ -127,8 +164,12 @@
           Whether you’re preparing for exams, catching up on schoolwork, or aiming to get ahead,
           our tutors create personalized paths in each subject to fit your needs.
         </p>
+        <p class="founder-line">Why we built Core School: we wanted a place where students could find expert tutors without the clutter — simple subjects, clear pricing, and real 1-on-1 sessions.</p>
         <p class="highlight">
           We currently offer <strong>Mathematics</strong>, <strong>Biology</strong>, <strong>Artificial Intelligence</strong>, and <strong>Computer Science</strong>.
+        </p>
+        <p class="pricing-line">
+          Sessions are paid with credits; buy packs that fit your schedule. <a href="credits.html">View pricing and credit packs</a>.
         </p>
       </div>
 
@@ -138,7 +179,6 @@
     </div>
   </section>
 
-
   <!-- ===== TUTORS SECTION ===== -->
   <section id="tutors" class="tutors">
     <div class="tutors-header">
@@ -146,6 +186,7 @@
       <p>
         Experienced, friendly, and ready to help you succeed — our tutors make learning engaging and effective.
       </p>
+      <p class="tutors-verified">Our tutors · All verified by Core School</p>
     </div>
 
     <div class="tutors-grid" id="tutorsGrid">
@@ -153,57 +194,72 @@
     </div>
   </section>
 
-
-
-  <!-- ===== CONTACT SECTION ===== -->
-  <section id="contact" class="contact">
-    <div class="contact-wrapper">
-      <h2 class="contact-title">Contact Us</h2>
-
-      <div class="contact-grid">
-        <!-- LEFT SIDE: CONTACT INFO -->
-        <div class="contact-info contact-text">
-          <div class="info-item">
-            <div class="info-icon">📞</div>
-            <div>
-              <div class="info-title">Call</div>
-              <div class="info-detail">+1 (555) 123-4567</div>
-            </div>
-          </div>
-
-          <div class="info-item">
-            <div class="info-icon">✉️</div>
-            <div>
-              <div class="info-title">Email</div>
-              <div class="info-detail">contact@coreschool.com</div>
-            </div>
-          </div>
-
-          <div class="info-item">
-            <div class="info-icon">📍</div>
-            <div>
-              <div class="info-title">Location</div>
-              <div class="info-detail">Online • Based in Boston, MA</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- RIGHT SIDE: “FORM” CARD WITH CALENDLY -->
-        <div class="contact-card contact-form reveal-on-scroll">
-          <p class="contact-card-header">
-            Book a 1-on-1 meeting with us
-          </p>
-          <div
-            class="calendly-inline-widget"
-            data-url="https://calendly.com/ilya-kudrenko/30min?hide_gdpr_banner=1"
-            style="min-width:320px;height:560px;"
-          ></div>
-        </div>
+  <!-- Rate tutor modal -->
+  <div class="rate-modal-overlay" id="rateModalOverlay" role="dialog" aria-modal="true" aria-labelledby="rateModalTitle" aria-hidden="true">
+    <div class="rate-modal">
+      <h3 id="rateModalTitle">Rate this tutor</h3>
+      <div class="rate-modal-stars" id="rateModalStars" data-rating="0" role="group" aria-label="Rating">
+        <span class="star" data-r="1" tabindex="0" role="button" aria-label="1 star">★</span>
+        <span class="star" data-r="2" tabindex="0" role="button" aria-label="2 stars">★</span>
+        <span class="star" data-r="3" tabindex="0" role="button" aria-label="3 stars">★</span>
+        <span class="star" data-r="4" tabindex="0" role="button" aria-label="4 stars">★</span>
+        <span class="star" data-r="5" tabindex="0" role="button" aria-label="5 stars">★</span>
+      </div>
+      <textarea id="rateModalComment" placeholder="Optional: share your experience (e.g. clear explanations, patient, great for exam prep)"></textarea>
+      <div class="rate-modal-actions">
+        <button type="button" class="btn-cancel" id="rateModalCancel">Cancel</button>
+        <button type="button" class="btn-submit" id="rateModalSubmit">Submit review</button>
       </div>
     </div>
+  </div>
+
+
+  <!-- ===== FAQ ===== -->
+  <section id="faq" class="faq-section">
+    <h2 class="faq-title">Frequently asked questions</h2>
+    <div class="faq-list">
+      <details class="faq-item" id="contact">
+        <summary>Contact us</summary>
+        <div class="faq-contact-content">
+          <p><strong>Call</strong><br>+1 (555) 123-4567</p>
+          <p><strong>Email</strong><br><a href="mailto:contact@coreschool.com">contact@coreschool.com</a></p>
+          <p><strong>Location</strong><br>Online • Based in Boston, MA</p>
+          <p><strong>Book a short intro call</strong><br>Questions? <a href="https://calendly.com/ilya-kudrenko/30min" target="_blank" rel="noopener">Schedule a 1-on-1 meeting with our team</a>.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>What subjects do you offer?</summary>
+        <p>We offer Mathematics, Biology, Artificial Intelligence, and Computer Science. Each subject has dedicated tutors you can browse and book.</p>
+      </details>
+      <details class="faq-item">
+        <summary>How do I book a lesson?</summary>
+        <p>Choose a subject from the home page or Classes section, pick a tutor on the class page, then select a time on their schedule and click Enroll. You need an account and credits to complete booking.</p>
+      </details>
+      <details class="faq-item">
+        <summary>How does credit pricing work?</summary>
+        <p>Sessions are paid with credits. You buy credit packs (e.g. 45 credits for 45 USD); each lesson costs credits based on subject and duration. <a href="credits.html">See packs and pricing</a>.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Can I cancel or reschedule?</summary>
+        <p>Yes. If you cancel at least 24 hours before the session, you get a full credit refund. Cancellations within 24 hours receive a 50% refund. You can manage your bookings from your profile.</p>
+      </details>
+      <details class="faq-item">
+        <summary>How do I contact support?</summary>
+        <p>Email us at <a href="mailto:contact@coreschool.com">contact@coreschool.com</a> or <a href="#contact">see Contact us</a> above to book a short intro call with our team.</p>
+      </details>
+    </div>
   </section>
-  <!-- Calendly script must be after the section -->
-  <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="footer-links">
+      <a href="#contact">Contact</a>
+      <a href="credits.html">Pricing &amp; credits</a>
+      <a href="privacy.html">Privacy</a>
+    </div>
+    <p class="footer-created">This website was created by <a href="mailto:ilya.kudrenko@gmail.com">Ilya Kudrenko</a> (ilya.kudrenko@gmail.com)</p>
+    <p class="footer-copy">&copy; 2025 Core School</p>
+  </footer>
 
 </main>
 </body>
@@ -247,23 +303,65 @@ const items = mathSymbols.map(symbol => {
   };
 });
 
-// ==== MOUSE TRACKING ====
-let mouse = { x: 0, y: 0, inside: false };
-hero.addEventListener("mousemove", e => {
-  const rect = hero.getBoundingClientRect();
+// ==== MOUSE TRACKING (hero + content zone) ====
+const heroContent = document.querySelector(".hero-content");
+let mouse = { x: 0, y: 0, inside: false, cursorInContent: false };
+
+// No-chase only when cursor is inside the content box (not in left/right margins)
+function updateMouseInContent(clientX, clientY) {
+  if (!heroContent) { mouse.cursorInContent = false; return; }
+  const r = heroContent.getBoundingClientRect();
+  mouse.cursorInContent = clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom;
+}
+
+// Track mouse on document so equations chase cursor in left/right margins too (not only inside hero)
+document.addEventListener("mousemove", e => {
+  const rect = container.getBoundingClientRect();
   mouse.x = e.clientX - rect.left;
   mouse.y = e.clientY - rect.top;
   mouse.inside = true;
+  updateMouseInContent(e.clientX, e.clientY);
 });
-hero.addEventListener("mouseleave", () => { mouse.inside = false; });
+document.addEventListener("mouseleave", () => { mouse.inside = false; mouse.cursorInContent = false; });
+
+// Content zone in container coordinates (with padding so symbols stay outside)
+const contentZonePadding = 14;
+
+function getContentZone() {
+  if (!heroContent || !container) return null;
+  const cr = container.getBoundingClientRect();
+  const zr = heroContent.getBoundingClientRect();
+  return {
+    left: zr.left - cr.left - contentZonePadding,
+    top: zr.top - cr.top - contentZonePadding,
+    right: zr.right - cr.left + contentZonePadding,
+    bottom: zr.bottom - cr.top + contentZonePadding
+  };
+}
+
+function pushOutOfZone(obj, zone) {
+  if (!zone) return;
+  const { left, top, right, bottom } = zone;
+  if (obj.x >= left && obj.x <= right && obj.y >= top && obj.y <= bottom) {
+    const dl = obj.x - left, dr = right - obj.x, dt = obj.y - top, db = bottom - obj.y;
+    const minDist = Math.min(dl, dr, dt, db);
+    if (minDist === dl) { obj.x = left; obj.vx = -Math.abs(obj.vx) * 0.6; }
+    else if (minDist === dr) { obj.x = right; obj.vx = Math.abs(obj.vx) * 0.6; }
+    else if (minDist === dt) { obj.y = top; obj.vy = -Math.abs(obj.vy) * 0.6; }
+    else { obj.y = bottom; obj.vy = Math.abs(obj.vy) * 0.6; }
+  }
+}
 
 // ==== ANIMATION LOOP ====
 function animate() {
   const rect = container.getBoundingClientRect();
 
+  const zone = getContentZone();
+  const chaseCursor = mouse.inside && !mouse.cursorInContent;
+
   items.forEach((obj, i) => {
-    // --- CHASE or IDLE ---
-    if (mouse.inside) {
+    // --- CHASE or IDLE (no chase when cursor is over central content) ---
+    if (chaseCursor) {
       const dx = mouse.x - obj.x;
       const dy = mouse.y - obj.y;
       const dist = Math.max(1, Math.sqrt(dx * dx + dy * dy));
@@ -291,7 +389,7 @@ function animate() {
 
     // --- LIMIT SPEED ---
     const speed = Math.sqrt(obj.vx * obj.vx + obj.vy * obj.vy);
-    const max = mouse.inside ? 2.5 : idleSpeed;
+    const max = chaseCursor ? 2.5 : idleSpeed;
     if (speed > max) {
       obj.vx = (obj.vx / speed) * max;
       obj.vy = (obj.vy / speed) * max;
@@ -306,6 +404,9 @@ function animate() {
     if (obj.y < repelEdge) { obj.y = repelEdge; obj.vy *= -0.7; }
     if (obj.x > rect.width - repelEdge) { obj.x = rect.width - repelEdge; obj.vx *= -0.7; }
     if (obj.y > rect.height - repelEdge) { obj.y = rect.height - repelEdge; obj.vy *= -0.7; }
+
+    // --- KEEP SYMBOLS OUT OF CENTRAL CONTENT ZONE ---
+    pushOutOfZone(obj, zone);
 
     // --- APPLY POSITION ---
     obj.el.style.transform = `translate(${obj.x}px, ${obj.y}px)`;
@@ -331,6 +432,15 @@ scrollContainer.addEventListener('scroll', () => {
     navbar.classList.toggle('scrolled', scrolledPast);
   }
 });
+
+// Mobile nav menu toggle
+const navMenuBtn = document.getElementById('navMenuBtn');
+if (navMenuBtn && navbar) {
+  navMenuBtn.addEventListener('click', () => navbar.classList.toggle('nav-open'));
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => navbar.classList.remove('nav-open'));
+  });
+}
 
 // ===== ACTIVE SECTION HIGHLIGHT =====
 const sections = document.querySelectorAll("section");
@@ -417,27 +527,7 @@ disciplinesObserver.observe(disciplinesHeader);
 disciplinesObserver.observe(disciplinesGrid);
 
 
-// Animate Contact section (enter + exit)
-const contactText = document.querySelector('.contact-text');
-const contactForm = document.querySelector('.contact-form');
-
-const contactObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      entry.target.classList.remove('hidden');
-    } else {
-      entry.target.classList.add('hidden');
-      entry.target.classList.remove('visible');
-    }
-  });
-}, { threshold: 0.3 });
-
-contactObserver.observe(contactText);
-contactObserver.observe(contactForm);
-
-
-// Reveal-on-scroll for Calendly card (and reusable for others)
+// Reveal-on-scroll (for elements with .reveal-on-scroll)
 const revealEls = document.querySelectorAll('.reveal-on-scroll');
 const scroller = document.querySelector('.scroll-container');
 
@@ -497,12 +587,13 @@ if (logoutLink) {
   });
 }
 
-// ===== LOAD ALL TUTORS ON MAIN PAGE =====
+// ===== LOAD ALL TUTORS ON MAIN PAGE (Preply-style cards) =====
+const isLoggedIn = () => !!localStorage.getItem("token");
+
 async function loadAllTutors() {
   const grid = document.getElementById("tutorsGrid");
   if (!grid) return;
 
-  // optional: показываем "Loading..."
   grid.innerHTML = `<p style="grid-column: 1 / -1; text-align:center;">Loading tutors...</p>`;
 
   try {
@@ -515,55 +606,59 @@ async function loadAllTutors() {
       return;
     }
 
-    grid.innerHTML = ""; // очистить
+    grid.innerHTML = "";
 
     tutors.forEach((t) => {
       const card = document.createElement("div");
       card.className = "tutor-card";
 
-      const imgHtml = t.image
-        ? `<img src="${t.image}" alt="${t.name} photo">`
-        : `<div style="
-            width:150px;height:150px;border-radius:100px;
-            background:#e0e0e0;margin:0 auto 1rem;
-            display:flex;align-items:center;justify-content:center;
-            font-size:3rem;color:#999;
-          ">👤</div>`;
+      const avatarHtml = t.image
+        ? `<img src="${t.image}" alt="" class="tutor-card-avatar-img">`
+        : `<span class="tutor-card-avatar-placeholder" aria-hidden="true">👤</span>`;
 
       let subjectText = "";
       try {
         const subs = t.subjects ? JSON.parse(t.subjects) : [];
-        if (Array.isArray(subs) && subs.length) subjectText = subs.join(" • ");
+        if (Array.isArray(subs) && subs.length) subjectText = subs.map(s => s.replace(/-/g, " ")).join(" · ");
       } catch (e) {
-        subjectText = t.subject || "";
+        subjectText = (t.subject || "").replace(/-/g, " ");
       }
 
-      const pitch = t.pitch || (t.bio ? t.bio.split('.')[0] + '.' : '');
+      const pitch = (t.pitch || (t.bio ? String(t.bio).trim().split(/[.!?]/)[0] + "." : "") || "Experienced tutor ready to help you succeed.").trim();
+      const hasRating = t.rating != null && t.rating !== undefined && Number(t.rating) > 0;
+      const reviewCount = Math.max(0, parseInt(t.review_count, 10) || 0);
+      const ratingHtml = hasRating
+        ? `<span class="tutor-card-rating"><span class="tutor-card-star">★</span> ${Number(t.rating).toFixed(1)} · ${reviewCount} review${reviewCount !== 1 ? "s" : ""}</span>`
+        : `<span class="tutor-card-rating tutor-card-rating--empty">No reviews yet</span>`;
 
-      let trustLine = '<span style="color:#888;font-size:0.85rem;">No reviews yet</span>';
-      if (t.rating !== null && t.rating !== undefined) {
-        trustLine = `<span style="color:#f5a623;font-weight:700;">★</span>
-          <strong style="color:#111;">${Number(t.rating).toFixed(1)}</strong>
-          <span style="color:#888;"> · ${t.review_count || 0} reviews</span>`;
-      }
+      const students = Math.max(0, parseInt(t.students_count, 10) || 0);
+      const lessons = Math.max(0, parseInt(t.lessons_count, 10) || 0);
+      const statsText = (students > 0 || lessons > 0)
+        ? [students > 0 ? `${students} students` : "", lessons > 0 ? `${lessons} lessons` : ""].filter(Boolean).join(" · ")
+        : "—";
 
-      const expParts = [];
-      if (t.students_count > 0) expParts.push(`${t.students_count} students`);
-      if (t.lessons_count > 0) expParts.push(`${t.lessons_count} sessions`);
-      const expLine = expParts.length
-        ? `<p style="font-size:0.8rem;color:#999;margin-bottom:0.3rem;">${expParts.join(' · ')}</p>`
-        : '';
+      const rateBtn = isLoggedIn()
+        ? `<button type="button" class="rate-link" data-tutor-id="${t.id}" data-tutor-name="${(t.name || "Tutor").replace(/"/g, "&quot;")}">Rate this tutor</button>`
+        : "";
 
       card.innerHTML = `
-        ${imgHtml}
-        <h3>${t.name || "Tutor"}</h3>
-        <p class="subject">${subjectText || "Available tutor"}</p>
-        <p class="bio" style="-webkit-line-clamp:2;">${pitch}</p>
-        <p style="font-size:0.85rem;margin-bottom:0.3rem;">${trustLine}</p>
-        ${expLine}
+        <div class="tutor-card-avatar">${avatarHtml}</div>
+        <h3 class="tutor-card-name">${(t.name || "Tutor").replace(/</g, "&lt;")}</h3>
+        <p class="tutor-card-subjects">${(subjectText || "Available tutor").replace(/</g, "&lt;")}</p>
+        ${ratingHtml}
+        <div class="tutor-card-stats">${statsText}</div>
+        <p class="tutor-card-pitch">${pitch.replace(/</g, "&lt;")}</p>
+        <div class="tutor-card-cta">${rateBtn}</div>
       `;
-
       grid.appendChild(card);
+    });
+
+    // Rate link handlers
+    grid.querySelectorAll(".rate-link").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        openRateModal(btn.dataset.tutorId, btn.dataset.tutorName);
+      });
     });
   } catch (err) {
     grid.innerHTML = `<p style="grid-column: 1 / -1; text-align:center;">Failed to load tutors.</p>`;
@@ -571,7 +666,122 @@ async function loadAllTutors() {
   }
 }
 
-// call it
+// Rate modal state
+let rateModalTutorId = null;
+let rateModalPreviousFocus = null;
+let rateModalKeyHandler = null;
+const overlay = document.getElementById("rateModalOverlay");
+const modalDialog = document.querySelector(".rate-modal");
+const starsEl = document.getElementById("rateModalStars");
+const commentEl = document.getElementById("rateModalComment");
+const titleEl = document.getElementById("rateModalTitle");
+
+function getModalFocusables() {
+  if (!modalDialog) return [];
+  return Array.from(modalDialog.querySelectorAll('button, textarea, .star[tabindex="0"]'));
+}
+
+function openRateModal(tutorId, tutorName) {
+  rateModalTutorId = tutorId;
+  rateModalPreviousFocus = document.activeElement;
+  titleEl.textContent = `Rate ${tutorName || "this tutor"}`;
+  starsEl.dataset.rating = "0";
+  starsEl.querySelectorAll(".star").forEach((s) => s.classList.toggle("active", false));
+  commentEl.value = "";
+  overlay.classList.add("open");
+  overlay.setAttribute("aria-hidden", "false");
+  const focusables = getModalFocusables();
+  if (focusables.length) focusables[0].focus();
+  rateModalKeyHandler = function (e) {
+    if (e.key === "Escape") {
+      closeRateModal();
+      return;
+    }
+    if (e.key !== "Tab") return;
+    const focusables = getModalFocusables();
+    if (focusables.length === 0) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      }
+    } else {
+      if (document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  };
+  document.addEventListener("keydown", rateModalKeyHandler);
+}
+
+function closeRateModal() {
+  overlay.classList.remove("open");
+  overlay.setAttribute("aria-hidden", "true");
+  rateModalTutorId = null;
+  if (rateModalKeyHandler) {
+    document.removeEventListener("keydown", rateModalKeyHandler);
+    rateModalKeyHandler = null;
+  }
+  if (rateModalPreviousFocus && rateModalPreviousFocus.focus) rateModalPreviousFocus.focus();
+  rateModalPreviousFocus = null;
+}
+
+function setStarRating(r) {
+  const rr = parseInt(r, 10);
+  starsEl.dataset.rating = rr;
+  starsEl.querySelectorAll(".star").forEach((s) => {
+    s.classList.toggle("active", parseInt(s.dataset.r, 10) <= rr);
+  });
+}
+
+starsEl.querySelectorAll(".star").forEach((star) => {
+  star.addEventListener("click", () => setStarRating(star.dataset.r));
+  star.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      setStarRating(star.dataset.r);
+    }
+  });
+});
+
+overlay.addEventListener("click", (e) => {
+  if (e.target === overlay) closeRateModal();
+});
+document.getElementById("rateModalCancel").addEventListener("click", closeRateModal);
+
+document.getElementById("rateModalSubmit").addEventListener("click", async () => {
+  const rating = parseInt(starsEl.dataset.rating, 10);
+  if (!rating || rating < 1 || rating > 5) {
+    alert("Please select a rating (1–5 stars).");
+    return;
+  }
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Please log in to submit a review.");
+    closeRateModal();
+    return;
+  }
+  try {
+    const res = await fetch("/api/reviews", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+      body: JSON.stringify({ tutorId: rateModalTutorId, rating, comment: commentEl.value.trim() || undefined }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      closeRateModal();
+      loadAllTutors();
+    } else {
+      alert(data.error || "Could not submit review.");
+    }
+  } catch (e) {
+    alert("Network error. Please try again.");
+  }
+});
+
 loadAllTutors();
 
 // ===== ENROLL AUTH CHECK =====

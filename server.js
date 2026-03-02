@@ -177,12 +177,32 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
             { name: 'duration_minutes', sql: 'ALTER TABLE enrollments ADD COLUMN duration_minutes INTEGER DEFAULT 60' },
             { name: 'creditsCost', sql: 'ALTER TABLE enrollments ADD COLUMN creditsCost INTEGER DEFAULT 0' },
             { name: 'lessonStatus', sql: "ALTER TABLE enrollments ADD COLUMN lessonStatus TEXT DEFAULT 'scheduled'" },
+            { name: 'inviteeUri', sql: 'ALTER TABLE enrollments ADD COLUMN inviteeUri TEXT' },
           ];
           mig.forEach(({ name, sql }) => {
             if (!names.includes(name)) db.run(sql, err => { if (!err) console.log(`Added ${name} to enrollments`); });
           });
         });
       }
+    }
+  );
+
+  // Tutor reviews (user ratings)
+  db.run(
+    `CREATE TABLE IF NOT EXISTS tutor_reviews (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      userId INTEGER NOT NULL,
+      tutorId INTEGER NOT NULL,
+      rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),
+      comment TEXT,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (userId) REFERENCES users(id),
+      FOREIGN KEY (tutorId) REFERENCES tutors(id),
+      UNIQUE(userId, tutorId)
+    )`,
+    (err) => {
+      if (err) console.error('Error creating tutor_reviews:', err.message);
+      else console.log('tutor_reviews table ready.');
     }
   );
 
@@ -494,25 +514,37 @@ app.get('/api/user-classes', authenticateToken, (req, res) => {
   );
 });
 
+// Student is "enrolled" in a class only if they have at least one active (scheduled, not canceled/completed) upcoming event
 app.post('/api/user-classes', authenticateToken, (req, res) => {
   const { className, classId } = req.body;
   if (!className || !classId) return res.status(400).json({ error: 'Class name and class ID are required' });
 
-  db.run(
-    'INSERT INTO user_classes (userId, className, classId) VALUES (?, ?, ?)',
-    [req.user.id, className, classId],
-    function (err) {
-      if (err) {
-        if (err.message.includes('UNIQUE constraint failed')) {
-          return res.status(400).json({ error: 'You are already enrolled in this class' });
-        }
-        return res.status(500).json({ error: 'Error enrolling in class' });
+  const now = new Date().toISOString();
+  db.get(
+    `SELECT 1 FROM enrollments WHERE userId = ? AND classId = ? AND (lessonStatus IS NULL OR lessonStatus = 'scheduled')
+     AND (eventDate IS NULL OR eventDate >= ?) LIMIT 1`,
+    [req.user.id, classId, now],
+    (err, row) => {
+      if (err) return res.status(500).json({ error: 'Database error' });
+      if (row) {
+        return res.status(400).json({ error: 'You are already enrolled in this class' });
       }
 
-      db.get('SELECT * FROM user_classes WHERE id = ?', [this.lastID], (err, row) => {
-        if (err) return res.status(500).json({ error: 'Database error' });
-        res.status(201).json({ message: 'Successfully enrolled in class', class: row });
-      });
+      db.run(
+        'INSERT OR IGNORE INTO user_classes (userId, className, classId) VALUES (?, ?, ?)',
+        [req.user.id, className, classId],
+        function (err) {
+          if (err) return res.status(500).json({ error: 'Error enrolling in class' });
+          db.get(
+            'SELECT * FROM user_classes WHERE userId = ? AND classId = ?',
+            [req.user.id, classId],
+            (err, row) => {
+              if (err) return res.status(500).json({ error: 'Database error' });
+              res.status(201).json({ message: 'Successfully enrolled in class', class: row });
+            }
+          );
+        }
+      );
     }
   );
 });
@@ -529,33 +561,108 @@ app.delete('/api/user-classes/:classId', authenticateToken, (req, res) => {
 
 // ===================== PUBLIC TUTORS =====================
 
-// Public: get tutors (optionally filtered by subject)
+// Public: get tutors with aggregated rating/review_count from tutor_reviews (optionally filtered by subject)
 app.get('/api/tutors', (req, res) => {
-  const { subject } = req.query; // ex: "math"
+  const { subject } = req.query;
 
-  db.all('SELECT * FROM tutors ORDER BY createdAt DESC', [], (err, rows) => {
+  const sql = `
+    SELECT t.*,
+           COALESCE(r.avg_rating, t.rating) AS rating,
+           COALESCE(r.review_count, t.review_count, 0) AS review_count
+    FROM tutors t
+    LEFT JOIN (
+      SELECT tutorId, AVG(rating) AS avg_rating, COUNT(*) AS review_count
+      FROM tutor_reviews GROUP BY tutorId
+    ) r ON t.id = r.tutorId
+    ORDER BY t.createdAt DESC
+  `;
+  db.all(sql, [], (err, rows) => {
     if (err) {
       console.error('❌ /api/tutors DB error:', err.message);
       return res.status(500).json({ error: 'Database error' });
     }
 
-    if (!subject) return res.json({ tutors: rows });
-
-    const filtered = (rows || []).filter((t) => {
-      if (!t.subjects) return false;
-      try {
-        const subs = typeof t.subjects === 'string' ? JSON.parse(t.subjects) : t.subjects;
-        return Array.isArray(subs) && subs.includes(subject);
-      } catch {
-        return false;
-      }
-    });
-
-    res.json({ tutors: filtered });
+    let result = rows || [];
+    if (subject) {
+      result = result.filter((t) => {
+        if (!t.subjects) return false;
+        try {
+          const subs = typeof t.subjects === 'string' ? JSON.parse(t.subjects) : t.subjects;
+          return Array.isArray(subs) && subs.includes(subject);
+        } catch {
+          return false;
+        }
+      });
+    }
+    res.json({ tutors: result });
   });
 });
 
+// Submit or update a review (one per user per tutor)
+app.post('/api/reviews', authenticateToken, (req, res) => {
+  const { tutorId, rating, comment } = req.body;
+  if (!tutorId || rating == null) return res.status(400).json({ error: 'tutorId and rating (1-5) are required' });
+  const r = parseInt(rating, 10);
+  if (r < 1 || r > 5) return res.status(400).json({ error: 'Rating must be between 1 and 5' });
+
+  db.run(
+    `INSERT INTO tutor_reviews (userId, tutorId, rating, comment) VALUES (?, ?, ?, ?)
+     ON CONFLICT(userId, tutorId) DO UPDATE SET rating = excluded.rating, comment = excluded.comment`,
+    [req.user.id, tutorId, r, comment || null],
+    function (err) {
+      if (err) return res.status(500).json({ error: 'Database error' });
+      res.status(201).json({ message: 'Thank you for your review!', id: this.lastID });
+    }
+  );
+});
+
+// Get current user's review for a tutor (optional, for pre-filling form)
+app.get('/api/reviews/me/:tutorId', authenticateToken, (req, res) => {
+  db.get(
+    'SELECT * FROM tutor_reviews WHERE userId = ? AND tutorId = ?',
+    [req.user.id, req.params.tutorId],
+    (err, row) => {
+      if (err) return res.status(500).json({ error: 'Database error' });
+      res.json({ review: row || null });
+    }
+  );
+});
+
 // ===================== ADMIN ROUTES =====================
+
+// Dashboard stats (admin only)
+app.get('/api/admin/stats', authenticateToken, isAdmin, (req, res) => {
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().slice(0, 10);
+
+  db.get('SELECT COUNT(*) AS n FROM tutors', [], (err, r1) => {
+    if (err) return res.status(500).json({ error: 'Database error' });
+    db.get('SELECT COUNT(*) AS n FROM users', [], (err, r2) => {
+      if (err) return res.status(500).json({ error: 'Database error' });
+      db.get(
+        'SELECT COUNT(*) AS n FROM enrollments WHERE date(eventDate) >= date(?) AND date(eventDate) <= date(?)',
+        [startOfMonth, endOfMonth],
+        (err, r3) => {
+          if (err) return res.status(500).json({ error: 'Database error' });
+          db.get(
+            "SELECT COUNT(*) AS n FROM enrollments WHERE lessonStatus = 'completed'",
+            [],
+            (err, r4) => {
+              if (err) return res.status(500).json({ error: 'Database error' });
+              res.json({
+                totalTutors: r1?.n ?? 0,
+                totalUsers: r2?.n ?? 0,
+                enrollmentsThisMonth: r3?.n ?? 0,
+                completedLessons: r4?.n ?? 0,
+              });
+            }
+          );
+        }
+      );
+    });
+  });
+});
 
 // Get all tutors (admin only)
 app.get('/api/admin/tutors', authenticateToken, isAdmin, (req, res) => {
@@ -695,9 +802,30 @@ async function fetchCalendlyEventDate(eventUri) {
   }
 }
 
+// Cancel the event in Calendly (frees the slot). Prefer inviteeUri; fallback to eventUri.
+async function cancelCalendlyEvent(enrollment) {
+  const token = process.env.CALENDLY_API_TOKEN;
+  if (!token) return;
+  const uri = enrollment.inviteeUri || enrollment.eventUri;
+  if (!uri) return;
+  try {
+    const resp = await fetch(uri, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (resp.ok) {
+      console.log('Calendly event canceled:', uri);
+    } else {
+      console.warn('Calendly cancel failed:', resp.status, resp.statusText, await resp.text());
+    }
+  } catch (e) {
+    console.error('Calendly cancel error:', e.message);
+  }
+}
+
 // Enroll: save enrollment + hold credits + send email to tutor
 app.post('/api/enroll', authenticateToken, async (req, res) => {
-  const { tutorId, classId, eventDate, eventUri, durationMinutes, subjectKey } = req.body;
+  const { tutorId, classId, eventDate, eventUri, inviteeUri, durationMinutes, subjectKey } = req.body;
   if (!tutorId || !classId) {
     return res.status(400).json({ error: 'Tutor and class are required' });
   }
@@ -746,10 +874,10 @@ app.post('/api/enroll', authenticateToken, async (req, res) => {
     const student = await dbGet('SELECT id, email, firstName, lastName, phone FROM users WHERE id = ?', [req.user.id]);
     if (!student) return res.status(404).json({ error: 'Student not found' });
 
-    // Atomic: enrollment + hold + ledger
+    // Atomic: enrollment + hold + ledger (inviteeUri used later for Calendly cancel)
     const enrollResult = await dbRun(
-      'INSERT INTO enrollments (userId, tutorId, tutorName, classId, className, eventDate, eventUri, duration_minutes, creditsCost, lessonStatus) VALUES (?,?,?,?,?,?,?,?,?,?)',
-      [req.user.id, tutorId, tutor.name, classId, className, resolvedDate, eventUri || null, duration, creditsCost, 'scheduled']
+      'INSERT INTO enrollments (userId, tutorId, tutorName, classId, className, eventDate, eventUri, inviteeUri, duration_minutes, creditsCost, lessonStatus) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
+      [req.user.id, tutorId, tutor.name, classId, className, resolvedDate, eventUri || null, inviteeUri || null, duration, creditsCost, 'scheduled']
     );
     const enrollmentId = enrollResult.lastID;
 
@@ -837,6 +965,31 @@ app.get('/api/enrollments', authenticateToken, (req, res) => {
       res.json({ enrollments: rows });
     }
   );
+});
+
+// Admin: list all enrollments with student and tutor info
+app.get('/api/admin/enrollments', authenticateToken, isAdmin, (req, res) => {
+  const { status } = req.query;
+  let sql = `
+    SELECT e.id, e.userId, e.tutorId, e.tutorName, e.classId, e.className,
+           e.eventDate, e.eventUri, e.duration_minutes, e.creditsCost,
+           e.lessonStatus, e.createdAt,
+           u.email AS studentEmail, u.firstName AS studentFirstName, u.lastName AS studentLastName
+    FROM enrollments e
+    LEFT JOIN users u ON u.id = e.userId
+    WHERE 1=1
+  `;
+  const params = [];
+  if (status) {
+    sql += ' AND e.lessonStatus = ?';
+    params.push(status);
+  }
+  sql += ' ORDER BY e.eventDate IS NULL, e.eventDate ASC, e.createdAt DESC';
+
+  db.all(sql, params, (err, rows) => {
+    if (err) return res.status(500).json({ error: 'Database error' });
+    res.json({ enrollments: rows });
+  });
 });
 
 // ===================== CREDIT HELPERS =====================
@@ -1120,6 +1273,45 @@ app.post('/api/lessons/:enrollmentId/cancel', authenticateToken, async (req, res
     }
 
     await dbRun("UPDATE enrollments SET lessonStatus = 'canceled' WHERE id = ?", [enrollmentId]);
+
+    // Cancel in Calendly so the slot is freed
+    await cancelCalendlyEvent(enrollment);
+
+    // Notify tutor by email
+    const tutor = await dbGet('SELECT id, name, email FROM tutors WHERE id = ?', [enrollment.tutorId]);
+    const student = await dbGet('SELECT firstName, lastName, email FROM users WHERE id = ?', [enrollment.userId]);
+    if (tutor && tutor.email && student) {
+      const studentName = [student.firstName, student.lastName].filter(Boolean).join(' ') || student.email;
+      const dateDisplay = enrollment.eventDate
+        ? new Date(enrollment.eventDate).toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })
+        : 'TBD';
+      const mailOptions = {
+        from: `"Core School" <${process.env.GMAIL_USER}>`,
+        to: tutor.email,
+        subject: `Lesson Canceled — ${enrollment.className}`,
+        html: `
+          <div style="font-family:Inter,Arial,sans-serif;max-width:560px;margin:0 auto;padding:2rem;">
+            <h2 style="color:#d32f2f;">Lesson Canceled</h2>
+            <p>Hi <strong>${tutor.name}</strong>,</p>
+            <p>A student has canceled a lesson that was scheduled with you.</p>
+            <table style="width:100%;border-collapse:collapse;margin:1.5rem 0;">
+              <tr><td style="padding:.5rem 0;color:#555;"><strong>Class:</strong></td><td style="padding:.5rem 0;">${enrollment.className}</td></tr>
+              <tr><td style="padding:.5rem 0;color:#555;"><strong>Student:</strong></td><td style="padding:.5rem 0;">${studentName}</td></tr>
+              <tr><td style="padding:.5rem 0;color:#555;"><strong>Was scheduled:</strong></td><td style="padding:.5rem 0;">${dateDisplay}</td></tr>
+            </table>
+            <p style="color:#888;font-size:.85rem;">This is an automated notification from Core School.</p>
+          </div>
+        `,
+      };
+      if (process.env.GMAIL_USER) {
+        mailTransporter.sendMail(mailOptions, (mailErr) => {
+          if (mailErr) console.error('Cancel email error:', mailErr.message);
+          else console.log(`Cancel notification sent to tutor ${tutor.email}`);
+        });
+      } else {
+        console.log(`[DEMO] Would email ${tutor.email}: Lesson canceled — ${enrollment.className}, ${studentName}, ${dateDisplay}`);
+      }
+    }
 
     res.json({ message: 'Lesson canceled', refundedCredits: refundAmount, chargedCredits: chargeAmount });
   } catch (e) {

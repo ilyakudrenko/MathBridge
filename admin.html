@@ -275,6 +275,34 @@
       gap: 0.5rem;
     }
 
+    .admin-dashboard-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #0077ff;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #555;
+    }
+
     @media (max-width: 768px) {
       .admin-header {
         flex-direction: column;
@@ -303,9 +331,17 @@
 
     <div class="message" id="message"></div>
 
+    <div class="admin-dashboard-stats" id="adminDashboardStats">
+      <div class="stat-card"><span class="stat-value" id="statTutors">—</span><span class="stat-label">Tutors</span></div>
+      <div class="stat-card"><span class="stat-value" id="statUsers">—</span><span class="stat-label">Users</span></div>
+      <div class="stat-card"><span class="stat-value" id="statEnrollmentsMonth">—</span><span class="stat-label">Enrollments this month</span></div>
+      <div class="stat-card"><span class="stat-value" id="statCompletedLessons">—</span><span class="stat-label">Lessons completed</span></div>
+    </div>
+
     <div class="admin-tabs">
       <button class="tab-btn active" data-tab="tutors">Manage Tutors</button>
       <button class="tab-btn" data-tab="users">Manage Users</button>
+      <button class="tab-btn" data-tab="enrollments">Enrollments</button>
       <button class="tab-btn" data-tab="credits">Credits</button>
     </div>
 
@@ -377,6 +413,42 @@
             </thead>
             <tbody id="tutorsTableBody">
             </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enrollments Tab -->
+    <div id="enrollmentsTab" class="tab-content">
+      <div class="section-card">
+        <h2>All Enrollments</h2>
+        <p style="margin-bottom:1rem;color:#666;">View and manage student lesson bookings. Mark lessons as completed, canceled, or no-show.</p>
+        <div class="form-group" style="margin-bottom:1rem;">
+          <label>Filter by status</label>
+          <select id="enrollmentStatusFilter" style="max-width:200px;padding:.5rem;border:1px solid #ddd;border-radius:8px;">
+            <option value="">All</option>
+            <option value="scheduled">Scheduled</option>
+            <option value="completed">Completed</option>
+            <option value="canceled">Canceled</option>
+            <option value="no_show">No-show</option>
+          </select>
+        </div>
+        <div class="loading" id="enrollmentsLoading">Loading enrollments...</div>
+        <div class="table-container" id="enrollmentsTableContainer" style="display:none;">
+          <table>
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Class</th>
+                <th>Tutor</th>
+                <th>Date / Time</th>
+                <th>Duration</th>
+                <th>Credits</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="enrollmentsTableBody"></tbody>
           </table>
         </div>
       </div>
@@ -504,6 +576,8 @@
         // Update content
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         document.getElementById(`${tab}Tab`).classList.add('active');
+
+        if (tab === 'enrollments') loadEnrollments();
       });
     });
 
@@ -515,6 +589,21 @@
       setTimeout(() => {
         message.classList.remove('show');
       }, 3000);
+    }
+
+    // Load dashboard stats
+    async function loadAdminStats() {
+      try {
+        const base = window.location.origin || 'http://localhost:3000';
+        const res = await fetch(`${base}/api/admin/stats`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const data = await res.json();
+        if (res.ok) {
+          document.getElementById('statTutors').textContent = data.totalTutors ?? '—';
+          document.getElementById('statUsers').textContent = data.totalUsers ?? '—';
+          document.getElementById('statEnrollmentsMonth').textContent = data.enrollmentsThisMonth ?? '—';
+          document.getElementById('statCompletedLessons').textContent = data.completedLessons ?? '—';
+        }
+      } catch (_) { /* ignore */ }
     }
 
     // Load tutors
@@ -753,6 +842,93 @@
       document.getElementById('usersTableContainer').style.display = 'block';
     }
 
+    // ===================== ENROLLMENTS TAB =====================
+    let enrollmentsList = [];
+
+    async function loadEnrollments() {
+      const status = document.getElementById('enrollmentStatusFilter').value;
+      const url = status ? `/api/admin/enrollments?status=${encodeURIComponent(status)}` : '/api/admin/enrollments';
+      try {
+        document.getElementById('enrollmentsLoading').style.display = 'block';
+        document.getElementById('enrollmentsTableContainer').style.display = 'none';
+        const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+        const data = await res.json();
+        if (res.ok) {
+          enrollmentsList = data.enrollments || [];
+          renderEnrollments();
+        } else {
+          showMessage(data.error || 'Error loading enrollments', 'error');
+        }
+      } catch (e) {
+        showMessage('Network error loading enrollments', 'error');
+      }
+    }
+
+    function renderEnrollments() {
+      const tbody = document.getElementById('enrollmentsTableBody');
+      tbody.innerHTML = '';
+      document.getElementById('enrollmentsLoading').style.display = 'none';
+      document.getElementById('enrollmentsTableContainer').style.display = 'block';
+
+      if (enrollmentsList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;">No enrollments found</td></tr>';
+        return;
+      }
+
+      enrollmentsList.forEach(e => {
+        const studentName = [e.studentFirstName, e.studentLastName].filter(Boolean).join(' ') || e.studentEmail || `User #${e.userId}`;
+        const dateStr = e.eventDate
+          ? new Date(e.eventDate).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })
+          : 'TBD';
+        const status = e.lessonStatus || 'scheduled';
+        const statusClass = status === 'scheduled' ? '' : status === 'completed' ? 'color:#22c55e' : status === 'canceled' ? 'color:#888' : 'color:#ef4444';
+        let actions = '';
+        if (status === 'scheduled') {
+          actions = `
+            <button class="btn-primary" style="padding:.35rem .6rem;font-size:.8rem;margin-right:.35rem;" onclick="lessonAction(${e.id},'complete')">Complete</button>
+            <button class="btn-edit" style="padding:.35rem .6rem;font-size:.8rem;margin-right:.35rem;" onclick="lessonAction(${e.id},'cancel')">Cancel</button>
+            <button class="btn-danger" style="padding:.35rem .6rem;font-size:.8rem;" onclick="lessonAction(${e.id},'no-show')">No-show</button>
+          `;
+        } else {
+          actions = '<span style="color:#999;">—</span>';
+        }
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><div>${studentName}</div><div style="font-size:.8rem;color:#666;">${e.studentEmail || ''}</div></td>
+          <td>${e.className || e.classId || '—'}</td>
+          <td>${e.tutorName || '—'}</td>
+          <td>${dateStr}</td>
+          <td>${e.duration_minutes || 60} min</td>
+          <td>${e.creditsCost != null ? e.creditsCost : '—'}</td>
+          <td style="${statusClass}">${status}</td>
+          <td class="actions-cell">${actions}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    window.lessonAction = async function(enrollmentId, action) {
+      const labels = { complete: 'mark as completed', cancel: 'cancel this lesson', 'no-show': 'mark as no-show' };
+      if (!confirm(`Are you sure you want to ${labels[action]}?`)) return;
+      try {
+        const res = await fetch(`/api/lessons/${enrollmentId}/${action}`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showMessage(data.message || 'Done');
+          loadEnrollments();
+        } else {
+          showMessage(data.error || 'Action failed', 'error');
+        }
+      } catch (e) {
+        showMessage('Network error', 'error');
+      }
+    };
+
+    document.getElementById('enrollmentStatusFilter').addEventListener('change', loadEnrollments);
+
     // Delete user
     window.deleteUser = async function(id) {
       if (!confirm('Are you sure you want to delete this user?')) return;
@@ -932,6 +1108,7 @@
     });
 
     // Load data on page load
+    loadAdminStats();
     loadTutors();
     loadUsers();
     loadSubjectRates();

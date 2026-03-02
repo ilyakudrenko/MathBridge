@@ -57,7 +57,7 @@
       display: flex;
       align-items: center;
       gap: 1rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1rem;
     }
 
     .avatar {
@@ -80,7 +80,7 @@
     }
 
     .payment-section {
-      margin-top: auto;
+      margin-top: 0;
       margin-bottom: 1rem;
       padding: 1.2rem 1.4rem;
       border-radius: 16px;
@@ -398,6 +398,26 @@
     .class-detail-panel .detail-events-list li:last-child {
       border-bottom: none;
     }
+    .detail-event-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .detail-cancel-btn {
+      font-size: 0.8rem;
+      padding: 0.25rem 0.5rem;
+      color: #c62828;
+      background: transparent;
+      border: 1px solid #c62828;
+      border-radius: 6px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .detail-cancel-btn:hover {
+      background: #ffebee;
+    }
     .detail-tutor-card {
       display: flex;
       gap: 1rem;
@@ -710,10 +730,36 @@
     @media (max-width: 968px) {
       .profile-layout {
         flex-direction: column;
+        padding: 1rem;
+        gap: 1rem;
       }
 
       .sidebar {
         width: 100%;
+        padding: 1.25rem;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .profile-layout {
+        padding: 0.75rem;
+      }
+      .section-card {
+        padding: 1rem;
+      }
+      .modal-content {
+        margin: 0.5rem;
+        max-width: calc(100% - 1rem);
+      }
+      .classes-grid {
+        gap: 1rem;
+      }
+      .class-detail-panel {
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 12px 12px 0 0;
       }
     }
   </style>
@@ -906,6 +952,16 @@
       }
     }
 
+    // Only scheduled, non-expired enrollments (exclude canceled/completed and past events)
+    function getActiveEnrollments() {
+      const now = new Date();
+      return allEnrollments.filter(e => {
+        if (e.lessonStatus && e.lessonStatus !== 'scheduled') return false;
+        if (!e.eventDate) return true;
+        return new Date(e.eventDate) >= now;
+      });
+    }
+
     // ===================== CLASSES =====================
 
     async function loadClasses() {
@@ -927,23 +983,21 @@
     }
 
     function getBestEnrollmentForClass(classId) {
-      const forClass = allEnrollments.filter(e => e.classId === classId);
+      const forClass = getActiveEnrollments().filter(e => e.classId === classId);
       if (!forClass.length) return null;
-      const now = new Date();
       const withDate = forClass.filter(e => e.eventDate);
-      const future = withDate.filter(e => new Date(e.eventDate) >= now).sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate));
+      const future = withDate.filter(e => new Date(e.eventDate) >= new Date()).sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate));
       if (future.length) return future[0];
       if (withDate.length) return withDate.sort((a, b) => new Date(b.eventDate) - new Date(a.eventDate))[0];
       return forClass.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''))[0];
     }
 
     function getAllEnrollmentsForClass(classId) {
-      return allEnrollments.filter(e => e.classId === classId);
+      return getActiveEnrollments().filter(e => e.classId === classId);
     }
 
     function hasUpcomingEvent(classId) {
-      const now = new Date();
-      return allEnrollments.some(e => e.classId === classId && e.eventDate && new Date(e.eventDate) >= now);
+      return getActiveEnrollments().some(e => e.classId === classId && e.eventDate && new Date(e.eventDate) >= new Date());
     }
 
     function buildTutorCard(enr) {
@@ -1015,13 +1069,19 @@
         if (sortedEnrollments.length > 0) {
           html += '<div class="detail-row" style="margin-top:0.75rem;"><strong>Scheduled sessions:</strong></div><ul class="detail-events-list">';
           sortedEnrollments.forEach(enr => {
+            const isFuture = enr.eventDate && new Date(enr.eventDate) >= new Date();
             if (enr.eventDate) {
               const d = new Date(enr.eventDate);
               const dateStr = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
               const timeStr = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-              html += `<li>${dateStr} at ${timeStr}</li>`;
+              html += `<li class="detail-event-item"><span>${dateStr} at ${timeStr}</span>`;
+              if (isFuture) {
+                html += ` <button type="button" class="detail-cancel-btn" data-enrollment-id="${enr.id}" data-class-name="${(enr.className || '').replace(/"/g, '&quot;')}">Cancel</button>`;
+              }
+              html += '</li>';
             } else {
-              html += '<li>Date TBD (scheduled via calendar)</li>';
+              html += '<li class="detail-event-item"><span>Date TBD (scheduled via calendar)</span>';
+              html += ` <button type="button" class="detail-cancel-btn" data-enrollment-id="${enr.id}" data-class-name="${(enr.className || '').replace(/"/g, '&quot;')}">Cancel</button></li>`;
             }
           });
           html += '</ul>';
@@ -1032,11 +1092,36 @@
         actions.innerHTML = `<a href="class.html?class=${userClass.classId}">Book a session</a>`;
       }
       body.innerHTML = html;
+      panel.querySelectorAll('.detail-cancel-btn').forEach(btn => {
+        btn.addEventListener('click', () => cancelEnrollment(btn.dataset.enrollmentId, btn.dataset.className));
+      });
       panel.classList.add('visible');
     }
 
     function hideClassDetail() {
       document.getElementById('classDetailPanel').classList.remove('visible');
+    }
+
+    async function cancelEnrollment(enrollmentId, className) {
+      if (!enrollmentId || !confirm(`Cancel this ${className || 'session'}? You may get a partial refund depending on cancellation time.`)) return;
+      try {
+        const res = await fetch(`/api/lessons/${enrollmentId}/cancel`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        });
+        const data = await res.json();
+        if (res.ok) {
+          await loadEnrollments();
+          await loadClasses();
+          renderCalendar();
+          hideClassDetail();
+        } else {
+          alert(data.error || 'Failed to cancel');
+        }
+      } catch (e) {
+        console.error('Cancel error:', e);
+        alert('Failed to cancel session');
+      }
     }
 
     function renderClasses(classes) {
@@ -1123,9 +1208,9 @@
       const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
       const today = new Date();
 
-      // Build a map of day -> enrollments for this month
+      // Build a map of day -> enrollments for this month (only active)
       const eventsByDay = {};
-      allEnrollments.forEach(enr => {
+      getActiveEnrollments().forEach(enr => {
         if (!enr.eventDate) return;
         const d = new Date(enr.eventDate);
         if (d.getFullYear() === calYear && d.getMonth() === calMonth) {
@@ -1169,9 +1254,9 @@
         grid.appendChild(cell);
       }
 
-      // Show/hide "no enrollments" message
+      // Show/hide "no enrollments" message (based on active only)
       const noEnrEl = document.getElementById('noEnrollments');
-      if (allEnrollments.length === 0) {
+      if (getActiveEnrollments().length === 0) {
         noEnrEl.style.display = 'block';
       } else {
         noEnrEl.style.display = 'none';

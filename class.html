@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Class Details - Core School</title>
+  <title>Class Details – Core School</title>
+  <meta name="description" content="View class details and available tutors for Mathematics, Biology, AI, or Computer Science at Core School. Book 1-on-1 sessions with verified tutors." />
   <link rel="stylesheet" href="css/style.css" />
   <style>
     .class-detail-container {
@@ -59,10 +60,18 @@
     }
 
     .class-price {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: #0077ff;
+      font-size: 1.1rem;
+      color: #444;
       margin-bottom: 3rem;
+      line-height: 1.5;
+    }
+    .class-price a {
+      color: #0077ff;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .class-price a:hover {
+      text-decoration: underline;
     }
 
     .available-tutors-section {
@@ -77,9 +86,43 @@
       font-size: 1.8rem;
       font-weight: 700;
       color: #111;
-      margin-bottom: 2rem;
+      margin-bottom: 1rem;
       padding-bottom: 1rem;
       border-bottom: 2px solid #111;
+    }
+
+    .tutor-sort-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .tutor-sort-label {
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .tutor-sort-btn {
+      padding: 0.4rem 0.9rem;
+      border: 1px solid #ccc;
+      background: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: #444;
+    }
+
+    .tutor-sort-btn:hover {
+      border-color: #0077ff;
+      color: #0077ff;
+    }
+
+    .tutor-sort-btn.active {
+      background: #0077ff;
+      border-color: #0077ff;
+      color: #fff;
     }
 
     .class-page .class-tutors-grid {
@@ -247,11 +290,16 @@
             <p class="class-description" id="classDescription">description...</p>
           </div>
 
-          <div class="class-price" id="classPrice">$ Price</div>
+          <div class="class-price" id="classPrice">Sessions are paid in <strong>credits</strong> (per session length). <a href="credits.html">View pricing &amp; credit packs</a></div>
         </div>
 
         <div class="available-tutors-section">
           <h2 class="available-tutors-header">Available Tutors</h2>
+          <div class="tutor-sort-bar">
+            <span class="tutor-sort-label">Sort by:</span>
+            <button type="button" class="tutor-sort-btn active" data-sort="rating">Rating</button>
+            <button type="button" class="tutor-sort-btn" data-sort="newest">Newest</button>
+          </div>
           <div class="class-tutors-grid" id="tutorsGrid">
             <!-- Tutor cards will be inserted here -->
           </div>
@@ -302,6 +350,19 @@
     };
 
     const subjectKey = subjectKeyByClassId[classId] || classId;
+
+    let allTutors = [];
+    let currentSort = "rating";
+
+    function sortTutors(tutors, sortBy) {
+      const list = [...(tutors || [])];
+      if (sortBy === "rating") {
+        list.sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0));
+      } else {
+        list.sort((a, b) => (b.id || 0) - (a.id || 0));
+      }
+      return list;
+    }
 
     function renderTutors(tutors) {
       const tutorsGrid = document.getElementById("tutorsGrid");
@@ -358,12 +419,19 @@
       });
     }
 
+    function applySortAndRender() {
+      const sorted = sortTutors(allTutors, currentSort);
+      renderTutors(sorted);
+    }
+
     async function loadTutorsForClass() {
       try {
         const res = await fetch(`/api/tutors?subject=${encodeURIComponent(subjectKey)}`);
         const data = await res.json();
-        renderTutors(data.tutors || []);
+        allTutors = data.tutors || [];
+        applySortAndRender();
       } catch (err) {
+        allTutors = [];
         renderTutors([]);
       }
     }
@@ -376,10 +444,9 @@
         return;
       }
 
-      // Update class info
+      // Update class info (price block is static: credits + link to credits.html)
       document.getElementById("className").textContent = classData.name;
       document.getElementById("classDescription").textContent = classData.description;
-      document.getElementById("classPrice").textContent = classData.price;
 
       // Show content
       document.getElementById("loading").style.display = "none";
@@ -389,6 +456,16 @@
     // Load on page load
     loadClassData();
     loadTutorsForClass();
+
+    // Sort by buttons
+    document.querySelectorAll(".tutor-sort-btn").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        document.querySelectorAll(".tutor-sort-btn").forEach((b) => b.classList.remove("active"));
+        this.classList.add("active");
+        currentSort = this.getAttribute("data-sort") || "rating";
+        applySortAndRender();
+      });
+    });
 
     // ===== ENROLL AUTH CHECK =====
 document.addEventListener("click", (e) => {
