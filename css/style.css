@@ -560,7 +560,7 @@ html {
 /* ===== HOW IT WORKS ===== */
 .how-it-works {
   background: #fff;
-  padding: 5rem 2rem;
+  padding: 6rem 2rem 5rem;
   text-align: center;
 }
 
@@ -1466,7 +1466,7 @@ html {
     font-size: 1.25rem;
   }
   .how-it-works {
-    padding: 3rem 1rem;
+    padding: 4rem 1rem 3rem;
   }
   .how-it-works-header h2 {
     font-size: 1.5rem;
