@@ -303,6 +303,46 @@
       color: #555;
     }
 
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+    .badge-pending { background: #fff3cd; color: #856404; }
+    .badge-approved { background: #d4edda; color: #155724; }
+    .badge-rejected { background: #f8d7da; color: #721c24; }
+
+    .btn-approve {
+      background: #22c55e;
+      color: #fff;
+      padding: 0.4rem 0.75rem;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: background 0.3s;
+      margin-right: 0.3rem;
+    }
+    .btn-approve:hover { background: #16a34a; }
+
+    .btn-reject {
+      background: #ef4444;
+      color: #fff;
+      padding: 0.4rem 0.75rem;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: background 0.3s;
+      margin-right: 0.3rem;
+    }
+    .btn-reject:hover { background: #dc2626; }
+
     @media (max-width: 768px) {
       .admin-header {
         flex-direction: column;
@@ -408,6 +448,7 @@
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Calendly</th>
+                <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -468,6 +509,7 @@
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Phone</th>
+                <th>Role</th>
                 <th>Created At</th>
                 <th>Actions</th>
               </tr>
@@ -657,6 +699,16 @@
         const calendlyText = tutor.calendly_url
           ? `<a href="${tutor.calendly_url}" target="_blank" style="color:#0077ff;font-size:.85rem;">${tutor.calendly_url.length > 30 ? tutor.calendly_url.slice(0, 30) + '…' : tutor.calendly_url}</a>`
           : '—';
+        const status = tutor.status || 'approved';
+        const badgeClass = status === 'approved' ? 'badge-approved' : status === 'pending' ? 'badge-pending' : 'badge-rejected';
+        let statusActions = '';
+        if (status === 'pending') {
+          statusActions = `<button class="btn-approve" onclick="setTutorStatus(${tutor.id},'approved')">Approve</button><button class="btn-reject" onclick="setTutorStatus(${tutor.id},'rejected')">Reject</button>`;
+        } else if (status === 'approved') {
+          statusActions = `<button class="btn-reject" onclick="setTutorStatus(${tutor.id},'rejected')" style="font-size:.75rem;">Revoke</button>`;
+        } else {
+          statusActions = `<button class="btn-approve" onclick="setTutorStatus(${tutor.id},'approved')" style="font-size:.75rem;">Approve</button>`;
+        }
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>
@@ -668,6 +720,7 @@
           <td>${tutor.email || '—'}</td>
           <td>${tutor.phone || '—'}</td>
           <td>${calendlyText}</td>
+          <td><span class="badge ${badgeClass}">${status}</span><div style="margin-top:.3rem;">${statusActions}</div></td>
           <td class="actions-cell">
             <button class="btn-edit" onclick="editTutor(${tutor.id})">Edit</button>
             <button class="btn-danger" onclick="deleteTutor(${tutor.id})">Delete</button>
@@ -764,6 +817,26 @@
       document.querySelector('#addTutorForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
 
+    // Set tutor status (approve/reject)
+    window.setTutorStatus = async function(id, status) {
+      try {
+        const response = await fetch(`/api/admin/tutors/${id}/status`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ status }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          showMessage(data.message || `Tutor ${status}`);
+          loadTutors();
+        } else {
+          showMessage(data.error || 'Error updating status', 'error');
+        }
+      } catch (error) {
+        showMessage('Network error', 'error');
+      }
+    };
+
     // Delete tutor
     window.deleteTutor = async function(id) {
       if (!confirm('Are you sure you want to delete this tutor?')) return;
@@ -824,12 +897,15 @@
       users.forEach(user => {
         const row = document.createElement('tr');
         const createdAt = new Date(user.createdAt).toLocaleDateString();
+        const role = user.role || 'student';
+        const roleBadge = role === 'teacher' ? '<span class="badge badge-pending">teacher</span>' : '<span class="badge badge-approved">student</span>';
         row.innerHTML = `
           <td>${user.id}</td>
           <td>${user.email}</td>
           <td>${user.firstName || '—'}</td>
           <td>${user.lastName || '—'}</td>
           <td>${user.phone || '—'}</td>
+          <td>${roleBadge}</td>
           <td>${createdAt}</td>
           <td class="actions-cell">
             <button class="btn-danger" onclick="deleteUser(${user.id})">Delete</button>

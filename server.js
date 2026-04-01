@@ -5,7 +5,33 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
 const Stripe = require('stripe');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 require('dotenv').config();
+
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadsDir),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `avatar_${Date.now()}${ext}`);
+  },
+});
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowed = /jpeg|jpg|png|gif|webp/;
+    if (allowed.test(path.extname(file.originalname).toLowerCase()) && allowed.test(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed'));
+    }
+  },
+});
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -28,6 +54,7 @@ app.use(cors());
 app.use('/api/stripe/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json());
 app.use(express.static('.'));
+app.use('/uploads', express.static(uploadsDir));
 
 // Initialize database
 const db = new sqlite3.Database(DB_PATH, (err) => {
@@ -53,11 +80,21 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
       firstName TEXT,
       lastName TEXT,
       phone TEXT,
+      role TEXT DEFAULT 'student',
+      profilePhoto TEXT,
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )`,
     (err) => {
       if (err) console.error('Error creating users table:', err.message);
-      else console.log('Users table ready.');
+      else {
+        console.log('Users table ready.');
+        db.all('PRAGMA table_info(users)', (e, cols) => {
+          if (e) return;
+          const names = (cols || []).map(c => c.name);
+          if (!names.includes('role')) db.run("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'student'");
+          if (!names.includes('profilePhoto')) db.run('ALTER TABLE users ADD COLUMN profilePhoto TEXT');
+        });
+      }
     }
   );
 
@@ -118,6 +155,8 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
           { name: 'students_count', sql: 'ALTER TABLE tutors ADD COLUMN students_count INTEGER DEFAULT 0' },
           { name: 'lessons_count', sql: 'ALTER TABLE tutors ADD COLUMN lessons_count INTEGER DEFAULT 0' },
           { name: 'calendly_url', sql: 'ALTER TABLE tutors ADD COLUMN calendly_url TEXT' },
+          { name: 'userId', sql: 'ALTER TABLE tutors ADD COLUMN userId INTEGER' },
+          { name: 'status', sql: "ALTER TABLE tutors ADD COLUMN status TEXT DEFAULT 'approved'" },
         ];
 
         migrations.forEach(({ name, sql }) => {
@@ -364,11 +403,13 @@ const isAdmin = (req, res, next) => {
 // Sign up
 app.post('/api/signup', async (req, res) => {
   try {
-    const { email, password, firstName, lastName, phone } = req.body;
+    const { email, password, firstName, lastName, phone, role, calendlyUrl, subjects } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' });
     }
+
+    const userRole = (role === 'teacher') ? 'teacher' : 'student';
 
     db.get('SELECT * FROM users WHERE email = ?', [email], async (err, row) => {
       if (err) return res.status(500).json({ error: 'Database error' });
@@ -377,24 +418,37 @@ app.post('/api/signup', async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, 10);
 
       db.run(
-        'INSERT INTO users (email, password, firstName, lastName, phone) VALUES (?, ?, ?, ?, ?)',
-        [email, hashedPassword, firstName || null, lastName || null, phone || null],
+        'INSERT INTO users (email, password, firstName, lastName, phone, role) VALUES (?, ?, ?, ?, ?, ?)',
+        [email, hashedPassword, firstName || null, lastName || null, phone || null, userRole],
         function (err) {
           if (err) return res.status(500).json({ error: 'Error creating user' });
 
-          const token = jwt.sign({ id: this.lastID, email }, JWT_SECRET, { expiresIn: '7d' });
+          const userId = this.lastID;
+          const token = jwt.sign({ id: userId, email }, JWT_SECRET, { expiresIn: '7d' });
 
-          res.status(201).json({
-            message: 'User created successfully',
-            token,
-            user: {
-              id: this.lastID,
-              email,
-              firstName: firstName || null,
-              lastName: lastName || null,
-              phone: phone || null,
-            },
-          });
+          const userResponse = {
+            id: userId,
+            email,
+            firstName: firstName || null,
+            lastName: lastName || null,
+            phone: phone || null,
+            role: userRole,
+          };
+
+          if (userRole === 'teacher') {
+            const tutorName = [firstName, lastName].filter(Boolean).join(' ') || email.split('@')[0];
+            const subjectsJson = Array.isArray(subjects) ? JSON.stringify(subjects) : null;
+            db.run(
+              'INSERT INTO tutors (name, email, phone, calendly_url, subjects, userId, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
+              [tutorName, email, phone || null, calendlyUrl || null, subjectsJson, userId, 'pending'],
+              function (err) {
+                if (err) console.error('Error creating tutor record:', err.message);
+                res.status(201).json({ message: 'Teacher account created. Awaiting admin approval.', token, user: userResponse });
+              }
+            );
+          } else {
+            res.status(201).json({ message: 'User created successfully', token, user: userResponse });
+          }
         }
       );
     });
@@ -427,6 +481,8 @@ app.post('/api/login', (req, res) => {
         firstName: row.firstName,
         lastName: row.lastName,
         phone: row.phone,
+        role: row.role || 'student',
+        profilePhoto: row.profilePhoto,
         isAdmin: admin,
       },
     });
@@ -437,18 +493,31 @@ app.post('/api/login', (req, res) => {
 
 app.get('/api/profile', authenticateToken, (req, res) => {
   db.get(
-    'SELECT id, email, firstName, lastName, phone, createdAt FROM users WHERE id = ?',
+    'SELECT id, email, firstName, lastName, phone, role, profilePhoto, createdAt FROM users WHERE id = ?',
     [req.user.id],
     (err, row) => {
       if (err) return res.status(500).json({ error: 'Database error' });
       if (!row) return res.status(404).json({ error: 'User not found' });
-      res.json({ user: row });
+
+      if (row.role === 'teacher') {
+        db.get('SELECT id, calendly_url, subjects, status FROM tutors WHERE userId = ?', [row.id], (err2, tutor) => {
+          if (tutor) {
+            row.tutorId = tutor.id;
+            row.calendlyUrl = tutor.calendly_url;
+            row.subjects = tutor.subjects;
+            row.tutorStatus = tutor.status;
+          }
+          res.json({ user: row });
+        });
+      } else {
+        res.json({ user: row });
+      }
     }
   );
 });
 
 app.put('/api/profile', authenticateToken, (req, res) => {
-  const { firstName, lastName, phone } = req.body;
+  const { firstName, lastName, phone, calendlyUrl, subjects } = req.body;
 
   db.run(
     'UPDATE users SET firstName = ?, lastName = ?, phone = ? WHERE id = ?',
@@ -457,15 +526,54 @@ app.put('/api/profile', authenticateToken, (req, res) => {
       if (err) return res.status(500).json({ error: 'Error updating profile' });
 
       db.get(
-        'SELECT id, email, firstName, lastName, phone, createdAt FROM users WHERE id = ?',
+        'SELECT id, email, firstName, lastName, phone, role, profilePhoto, createdAt FROM users WHERE id = ?',
         [req.user.id],
         (err, row) => {
           if (err) return res.status(500).json({ error: 'Database error' });
-          res.json({ message: 'Profile updated successfully', user: row });
+
+          if (row.role === 'teacher') {
+            const subjectsJson = Array.isArray(subjects) ? JSON.stringify(subjects) : undefined;
+            const tutorName = [firstName, lastName].filter(Boolean).join(' ') || row.email.split('@')[0];
+            const updates = ['name = ?'];
+            const params = [tutorName];
+            if (calendlyUrl !== undefined) { updates.push('calendly_url = ?'); params.push(calendlyUrl); }
+            if (subjectsJson !== undefined) { updates.push('subjects = ?'); params.push(subjectsJson); }
+            params.push(row.id);
+            db.run(`UPDATE tutors SET ${updates.join(', ')} WHERE userId = ?`, params, () => {
+              db.get('SELECT calendly_url, subjects, status FROM tutors WHERE userId = ?', [row.id], (e, tutor) => {
+                if (tutor) {
+                  row.calendlyUrl = tutor.calendly_url;
+                  row.subjects = tutor.subjects;
+                  row.tutorStatus = tutor.status;
+                }
+                res.json({ message: 'Profile updated successfully', user: row });
+              });
+            });
+          } else {
+            res.json({ message: 'Profile updated successfully', user: row });
+          }
         }
       );
     }
   );
+});
+
+// Upload profile photo
+app.post('/api/upload-photo', authenticateToken, upload.single('photo'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No photo uploaded' });
+
+  const photoUrl = `/uploads/${req.file.filename}`;
+  db.run('UPDATE users SET profilePhoto = ? WHERE id = ?', [photoUrl, req.user.id], function (err) {
+    if (err) return res.status(500).json({ error: 'Error saving photo' });
+
+    db.get('SELECT role FROM users WHERE id = ?', [req.user.id], (e, user) => {
+      if (user && user.role === 'teacher') {
+        db.run('UPDATE tutors SET image = ? WHERE userId = ?', [photoUrl, req.user.id]);
+      }
+    });
+
+    res.json({ message: 'Photo uploaded', photoUrl });
+  });
 });
 
 // ===================== APPOINTMENTS =====================
@@ -574,6 +682,7 @@ app.get('/api/tutors', (req, res) => {
       SELECT tutorId, AVG(rating) AS avg_rating, COUNT(*) AS review_count
       FROM tutor_reviews GROUP BY tutorId
     ) r ON t.id = r.tutorId
+    WHERE (t.status IS NULL OR t.status = 'approved')
     ORDER BY t.createdAt DESC
   `;
   db.all(sql, [], (err, rows) => {
@@ -726,10 +835,23 @@ app.delete('/api/admin/tutors/:id', authenticateToken, isAdmin, (req, res) => {
   });
 });
 
+// Approve or reject tutor (admin only)
+app.put('/api/admin/tutors/:id/status', authenticateToken, isAdmin, (req, res) => {
+  const { status } = req.body;
+  if (!['approved', 'rejected', 'pending'].includes(status)) {
+    return res.status(400).json({ error: 'Status must be approved, rejected, or pending' });
+  }
+  db.run('UPDATE tutors SET status = ? WHERE id = ?', [status, req.params.id], function (err) {
+    if (err) return res.status(500).json({ error: 'Database error' });
+    if (this.changes === 0) return res.status(404).json({ error: 'Tutor not found' });
+    res.json({ message: `Tutor ${status}` });
+  });
+});
+
 // Get all users (admin only)
 app.get('/api/admin/users', authenticateToken, isAdmin, (req, res) => {
   db.all(
-    'SELECT id, email, firstName, lastName, phone, createdAt FROM users WHERE email != ? ORDER BY createdAt DESC',
+    'SELECT id, email, firstName, lastName, phone, role, profilePhoto, createdAt FROM users WHERE email != ? ORDER BY createdAt DESC',
     [ADMIN_EMAIL],
     (err, rows) => {
       if (err) return res.status(500).json({ error: 'Database error' });
