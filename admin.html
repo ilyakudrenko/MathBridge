@@ -636,8 +636,7 @@
     // Load dashboard stats
     async function loadAdminStats() {
       try {
-        const base = window.location.origin || 'http://localhost:3000';
-        const res = await fetch(`${base}/api/admin/stats`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const res = await fetch('/api/admin/stats', { headers: { 'Authorization': `Bearer ${token}` } });
         const data = await res.json();
         if (res.ok) {
           document.getElementById('statTutors').textContent = data.totalTutors ?? '—';
@@ -651,7 +650,7 @@
     // Load tutors
     async function loadTutors() {
       try {
-        const response = await fetch('http://localhost:3000/api/admin/tutors', {
+        const response = await fetch('/api/admin/tutors', {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -754,8 +753,8 @@
       };
 
       const url = editingTutorId 
-        ? `http://localhost:3000/api/admin/tutors/${editingTutorId}`
-        : 'http://localhost:3000/api/admin/tutors';
+        ? `/api/admin/tutors/${editingTutorId}`
+        : '/api/admin/tutors';
       const method = editingTutorId ? 'PUT' : 'POST';
 
       try {
@@ -842,7 +841,7 @@
       if (!confirm('Are you sure you want to delete this tutor?')) return;
 
       try {
-        const response = await fetch(`http://localhost:3000/api/admin/tutors/${id}`, {
+        const response = await fetch(`/api/admin/tutors/${id}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -865,7 +864,7 @@
     // Load users
     async function loadUsers() {
       try {
-        const response = await fetch('http://localhost:3000/api/admin/users', {
+        const response = await fetch('/api/admin/users', {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -1010,7 +1009,7 @@
       if (!confirm('Are you sure you want to delete this user?')) return;
 
       try {
-        const response = await fetch(`http://localhost:3000/api/admin/users/${id}`, {
+        const response = await fetch(`/api/admin/users/${id}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`,
