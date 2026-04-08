@@ -1,0 +1,156 @@
+/* Shared auth pages: Login, Sign up, Forgot / Reset password */
+:root {
+  --auth-input-pad-y: 1.05rem;
+  --auth-input-pad-x: 1.35rem;
+  --auth-input-fs: 1.08rem;
+  --auth-input-radius: 16px;
+  --auth-form-gap: 1.25rem;
+  --auth-card-max: 480px;
+}
+
+.auth-surface .auth-card {
+  max-width: var(--auth-card-max);
+  width: 100%;
+  border-radius: 22px;
+  padding: 3rem 2.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.auth-surface .auth-card h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #111;
+  text-align: center;
+}
+
+.auth-surface .auth-card > p.subtitle {
+  text-align: center;
+  color: #555;
+  margin-bottom: 2rem;
+  font-size: 1.05rem;
+  line-height: 1.45;
+}
+
+.auth-surface .auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--auth-form-gap);
+}
+
+.auth-surface .auth-form input[type="email"],
+.auth-surface .auth-form input[type="password"],
+.auth-surface .auth-form input[type="text"],
+.auth-surface .auth-form input[type="tel"],
+.auth-surface .auth-form input[type="url"] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--auth-input-pad-y) var(--auth-input-pad-x);
+  min-height: 3.35rem;
+  border-radius: var(--auth-input-radius);
+  border: 1px solid #ccc;
+  font-size: var(--auth-input-fs);
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.auth-surface .auth-form input:focus {
+  border-color: #0077ff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 119, 255, 0.12);
+}
+
+.auth-surface .auth-btn {
+  width: 100%;
+  box-sizing: border-box;
+  background: #0077ff;
+  color: #fff;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: var(--auth-input-radius);
+  font-size: 1.08rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s, box-shadow 0.3s;
+  margin-top: 0.35rem;
+  text-align: center;
+}
+
+.auth-surface .auth-btn:hover:not(:disabled) {
+  background: #005fcc;
+  box-shadow: 0 6px 20px rgba(0, 119, 255, 0.28);
+}
+
+.auth-surface .auth-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.auth-surface .auth-links {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #555;
+  font-size: 0.98rem;
+}
+
+.auth-surface .auth-links a {
+  color: #0077ff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-surface .auth-links a:hover {
+  text-decoration: underline;
+}
+
+.auth-surface .forgot-row {
+  text-align: right;
+  margin-top: -0.65rem;
+}
+
+.auth-surface .forgot-row a {
+  font-size: 0.92rem;
+  color: #0077ff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-surface .forgot-row a:hover {
+  text-decoration: underline;
+}
+
+.auth-surface .legal-consent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 0.25rem;
+}
+
+.auth-surface .legal-consent label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: #444;
+  cursor: pointer;
+  text-align: left;
+}
+
+.auth-surface .legal-consent input[type="checkbox"] {
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: #0077ff;
+}
+
+.auth-surface .legal-consent a {
+  color: #0077ff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-surface .legal-consent a:hover {
+  text-decoration: underline;
+}

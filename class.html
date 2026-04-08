@@ -9,12 +9,12 @@
   <style>
     .class-detail-container {
       min-height: 100vh;
-      background: #f7f9fb;
-      padding: 2rem;
+      background: linear-gradient(180deg, #eef2f9 0%, #f7f9fb 35%, #f0f4fa 100%);
+      padding: 2rem 1.25rem 3rem;
     }
 
     .class-page .class-detail-content {
-      max-width: 1200px;
+      max-width: 1100px;
       margin: 0 auto;
     }
 
@@ -25,93 +25,117 @@
       color: #0077ff;
       text-decoration: none;
       font-weight: 600;
-      margin-bottom: 2rem;
-      transition: color 0.3s;
+      margin-bottom: 1.75rem;
+      font-size: 0.98rem;
     }
+    .back-link:hover { color: #005fcc; }
 
-    .back-link:hover {
-      color: #005fcc;
-    }
-
-    .class-header {
-      margin-bottom: 2rem;
-    }
+    .class-header { margin-bottom: 1.75rem; }
 
     .class-name {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: #111;
-      margin-bottom: 1.5rem;
+      font-size: clamp(1.85rem, 4vw, 2.6rem);
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 1.25rem;
+      letter-spacing: -0.03em;
     }
 
     .class-description-box {
-      border: 2px solid #0077ff;
-      border-radius: 12px;
-      padding: 2rem;
-      background: #fff;
-      margin-bottom: 1.5rem;
-      min-height: 150px;
+      border: 1px solid rgba(0, 119, 255, 0.35);
+      border-radius: 20px;
+      padding: 1.75rem 2rem;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(15, 23, 42, 0.06);
+      margin-bottom: 1.25rem;
     }
 
     .class-description {
-      color: #444;
+      color: #475569;
       font-size: 1.05rem;
-      line-height: 1.7;
+      line-height: 1.75;
+      margin: 0;
     }
 
     .class-price {
-      font-size: 1.1rem;
-      color: #444;
-      margin-bottom: 3rem;
-      line-height: 1.5;
+      font-size: 1.02rem;
+      color: #64748b;
+      margin-bottom: 2rem;
+      line-height: 1.55;
     }
     .class-price a {
       color: #0077ff;
       font-weight: 600;
       text-decoration: none;
     }
-    .class-price a:hover {
-      text-decoration: underline;
-    }
+    .class-price a:hover { text-decoration: underline; }
 
     .available-tutors-section {
-      border: 2px solid #111;
-      border-radius: 12px;
-      padding: 2rem;
-      background: #fff;
+      border: 1px solid rgba(0, 119, 255, 0.2);
+      border-radius: 24px;
+      padding: 2rem 1.75rem 2.25rem;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      box-shadow: 0 16px 48px rgba(15, 23, 42, 0.07);
+    }
+
+    .tutors-section-head {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .available-tutors-kicker {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #0077ff;
+      margin-bottom: 0.35rem;
     }
 
     .available-tutors-header {
-      text-align: center;
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: #111;
-      margin-bottom: 1rem;
-      padding-bottom: 1rem;
-      border-bottom: 2px solid #111;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0 0 0.35rem;
+      letter-spacing: -0.02em;
+    }
+
+    .available-tutors-sub {
+      font-size: 0.95rem;
+      color: #64748b;
+      max-width: 420px;
+      margin: 0 auto;
+      line-height: 1.5;
     }
 
     .tutor-sort-bar {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.75rem;
-      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-bottom: 1.75rem;
     }
 
     .tutor-sort-label {
       font-size: 0.9rem;
-      color: #555;
+      color: #64748b;
+      font-weight: 600;
     }
 
     .tutor-sort-btn {
-      padding: 0.4rem 0.9rem;
-      border: 1px solid #ccc;
+      padding: 0.5rem 1.15rem;
+      border: 1px solid #e2e8f0;
       background: #fff;
-      border-radius: 6px;
+      border-radius: 999px;
       cursor: pointer;
       font-size: 0.9rem;
-      color: #444;
+      font-weight: 600;
+      color: #475569;
+      transition: all 0.2s;
     }
 
     .tutor-sort-btn:hover {
@@ -123,79 +147,93 @@
       background: #0077ff;
       border-color: #0077ff;
       color: #fff;
+      box-shadow: 0 4px 14px rgba(0, 119, 255, 0.28);
     }
 
     .class-page .class-tutors-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-      margin-top: 2rem;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.35rem;
     }
 
     .tutor-card-detail {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding: 1.5rem;
-      background: #f7f9fb;
-      border-radius: 12px;
-      transition: transform 0.3s, box-shadow 0.3s;
+      padding: 0;
+      background: #fff;
+      border-radius: 20px;
+      border: 1px solid #e8ecf2;
+      overflow: hidden;
+      transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.2s;
     }
 
     .tutor-card-detail:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      transform: translateY(-3px);
+      box-shadow: 0 14px 40px rgba(15, 23, 42, 0.1);
+      border-color: rgba(0, 119, 255, 0.25);
+    }
+
+    .tutor-card-row {
+      display: flex;
+      gap: 1.1rem;
+      padding: 1.35rem 1.35rem 0;
+      align-items: flex-start;
     }
 
     .tutor-avatar {
-      width: 100px;
-      height: 100px;
+      width: 72px;
+      height: 72px;
+      min-width: 72px;
       border-radius: 50%;
-      background: #e0e0e0;
+      background: linear-gradient(145deg, #e8f0ff, #f1f5f9);
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative;
-      margin-bottom: 1rem;
-      border: 2px solid #ddd;
+      border: 2px solid #fff;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
       overflow: hidden;
+      flex-shrink: 0;
     }
 
     .tutor-avatar img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 50%;
+    }
+
+    .tutor-avatar-initials {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #0077ff;
+      letter-spacing: 0.02em;
+      line-height: 1;
     }
 
     .tutor-avatar-icon {
-      font-size: 3rem;
-      color: #999;
+      font-size: 2rem;
+      opacity: 0.45;
     }
 
-    .tutor-heart {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      font-size: 1.2rem;
-      color: #ff3b30;
+    .tutor-card-body {
+      flex: 1;
+      min-width: 0;
+      text-align: left;
     }
 
     .tutor-name {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #111;
-      margin-bottom: 0.4rem;
-      text-align: center;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 0.35rem;
+      line-height: 1.25;
+      word-break: break-word;
     }
 
     .tutor-pitch {
-      font-size: 0.9rem;
-      color: #555;
-      line-height: 1.4;
-      text-align: center;
-      margin-bottom: 0.5rem;
-      max-width: 220px;
+      font-size: 0.88rem;
+      color: #64748b;
+      line-height: 1.45;
+      margin: 0 0 0.5rem;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -203,10 +241,9 @@
     }
 
     .tutor-trust {
-      font-size: 0.85rem;
-      color: #888;
-      margin-bottom: 0.3rem;
-      text-align: center;
+      font-size: 0.82rem;
+      color: #94a3b8;
+      margin-bottom: 0.25rem;
     }
 
     .tutor-trust .star {
@@ -215,61 +252,52 @@
     }
 
     .tutor-trust .rating-num {
-      font-weight: 600;
-      color: #111;
+      font-weight: 700;
+      color: #334155;
     }
 
     .tutor-experience {
-      font-size: 0.8rem;
-      color: #999;
-      margin-bottom: 0.8rem;
-      text-align: center;
+      font-size: 0.78rem;
+      color: #94a3b8;
+      margin-bottom: 0;
     }
 
-    .tutor-bio {
-      font-size: 0.95rem;
-      color: #555;
-      line-height: 1.5;
-      text-align: center;
-      margin-bottom: 1rem;
-      max-width: 200px;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+    .tutor-card-footer {
+      padding: 1rem 1.35rem 1.35rem;
+      margin-top: auto;
     }
 
     .enroll-btn {
-      background: transparent;
-      color: #0077ff;
-      border: 2px solid #0077ff;
-      padding: 0.6rem 1.5rem;
-      border-radius: 8px;
-      font-weight: 600;
+      background: #0077ff;
+      color: #fff;
+      border: none;
+      padding: 0.85rem 1.25rem;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 0.95rem;
       cursor: pointer;
       text-decoration: none;
-      display: inline-block;
-      transition: all 0.3s;
+      display: block;
       text-align: center;
-      width: 100%;
+      transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+      box-shadow: 0 4px 16px rgba(0, 119, 255, 0.28);
     }
 
     .enroll-btn:hover {
-      background: #0077ff;
+      background: #0066dd;
+      box-shadow: 0 6px 22px rgba(0, 119, 255, 0.35);
+      transform: translateY(-1px);
       color: #fff;
     }
 
     .loading {
       text-align: center;
       padding: 3rem;
-      color: #555;
+      color: #64748b;
     }
 
     @media (max-width: 768px) {
-      .class-name {
-        font-size: 2rem;
-      }
-      .tutors-grid {
+      .class-page .class-tutors-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -294,7 +322,11 @@
         </div>
 
         <div class="available-tutors-section">
-          <h2 class="available-tutors-header">Available Tutors</h2>
+          <div class="tutors-section-head">
+            <p class="available-tutors-kicker">Choose your guide</p>
+            <h2 class="available-tutors-header">Available tutors</h2>
+            <p class="available-tutors-sub">Compare experience and ratings, then book a session that fits your schedule.</p>
+          </div>
           <div class="tutor-sort-bar">
             <span class="tutor-sort-label">Sort by:</span>
             <button type="button" class="tutor-sort-btn active" data-sort="rating">Rating</button>
@@ -343,7 +375,7 @@
 
     // Map classId → tutor.subjects values stored in DB
     const subjectKeyByClassId = {
-      mathematics: "math",
+      mathematics: "mathematics",
       biology: "biology",
       ai: "ai",
       "computer-science": "computer-science",
@@ -364,13 +396,27 @@
       return list;
     }
 
+    function tutorInitials(name) {
+      const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
+      const a = (parts[0] && parts[0][0]) || "";
+      const b = (parts[1] && parts[1][0]) || "";
+      return (a + b).toUpperCase() || "?";
+    }
+
+    function escapeHtml(s) {
+      return String(s || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/"/g, "&quot;");
+    }
+
     function renderTutors(tutors) {
       const tutorsGrid = document.getElementById("tutorsGrid");
       tutorsGrid.innerHTML = "";
 
       if (!tutors || tutors.length === 0) {
         tutorsGrid.innerHTML =
-          '<p style="text-align:center; grid-column: 1 / -1;">No tutors available for this class yet.</p>';
+          '<p style="text-align:center; grid-column: 1 / -1; color:#64748b; padding:2rem;">No tutors available for this class yet. Check back soon or explore another subject.</p>';
         return;
       }
 
@@ -378,41 +424,53 @@
         const tutorCard = document.createElement("div");
         tutorCard.className = "tutor-card-detail";
 
-        const hasImage = tutor.image && tutor.image !== "";
-        const avatarContent = hasImage
-          ? `<img src="${tutor.image}" alt="${tutor.name}">`
-          : `<span class="tutor-avatar-icon">👤</span>`;
+        const rawName = tutor.name || "Tutor";
+        const safeName = escapeHtml(rawName);
+        const initials = tutorInitials(rawName);
+        const hasImage = tutor.image && String(tutor.image).trim() !== "";
 
-        const pitchText = tutor.pitch || (tutor.bio ? tutor.bio.split('.')[0] + '.' : 'Experienced tutor');
+        const imgSrc = String(tutor.image).replace(/"/g, '&quot;');
+        const avatarInner = hasImage
+          ? `<img src="${imgSrc}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+             <span class="tutor-avatar-initials" style="display:none;">${escapeHtml(initials)}</span>`
+          : `<span class="tutor-avatar-initials">${escapeHtml(initials)}</span>`;
 
-        let trustHtml = '';
+        const pitchRaw = tutor.pitch || (tutor.bio ? String(tutor.bio).split(/[.!?]/)[0] + "." : "Experienced tutor ready to help you reach your goals.");
+        const pitchText = escapeHtml(pitchRaw.trim());
+
+        let trustHtml = "";
         if (tutor.rating !== null && tutor.rating !== undefined) {
           trustHtml = `<div class="tutor-trust">
             <span class="star">★</span>
             <span class="rating-num">${Number(tutor.rating).toFixed(1)}</span>
-            · ${tutor.review_count || 0} reviews
+            · ${tutor.review_count || 0} review${(tutor.review_count || 0) === 1 ? "" : "s"}
           </div>`;
         } else {
-          trustHtml = `<div class="tutor-trust">No reviews yet</div>`;
+          trustHtml = `<div class="tutor-trust">No reviews yet — be the first to book.</div>`;
         }
 
         const expParts = [];
         if (tutor.students_count > 0) expParts.push(`${tutor.students_count} students`);
         if (tutor.lessons_count > 0) expParts.push(`${tutor.lessons_count} sessions`);
         const expHtml = expParts.length
-          ? `<div class="tutor-experience">${expParts.join(' · ')}</div>`
-          : '';
+          ? `<div class="tutor-experience">${expParts.join(" · ")}</div>`
+          : "";
 
         tutorCard.innerHTML = `
-          <div class="tutor-avatar">
-            ${avatarContent}
+          <div class="tutor-card-row">
+            <div class="tutor-avatar">${avatarInner}</div>
+            <div class="tutor-card-body">
+              <div class="tutor-name">${safeName}</div>
+              <div class="tutor-pitch">${pitchText}</div>
+              ${trustHtml}
+              ${expHtml}
+            </div>
           </div>
-          <div class="tutor-name">${tutor.name}</div>
-          <div class="tutor-pitch">${pitchText}</div>
-          ${trustHtml}
-          ${expHtml}
-          <a href="schedule.html?tutorId=${encodeURIComponent(tutor.id)}&class=${encodeURIComponent(classId)}" class="enroll-btn">
-            Enroll</a>
+          <div class="tutor-card-footer">
+            <a href="schedule.html?tutorId=${encodeURIComponent(tutor.id)}&class=${encodeURIComponent(classId)}" class="enroll-btn">
+              Book with this tutor
+            </a>
+          </div>
         `;
 
         tutorsGrid.appendChild(tutorCard);

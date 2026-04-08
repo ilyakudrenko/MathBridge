@@ -7,6 +7,7 @@ const nodemailer = require('nodemailer');
 const Stripe = require('stripe');
 const multer = require('multer');
 const path = require('path');
+const crypto = require('crypto');
 
 require('dotenv').config();
 
@@ -27,6 +28,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const DB_PATH = process.env.DB_PATH || './database.sqlite';
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const APP_BASE_URL = (process.env.APP_BASE_URL || '').replace(/\/$/, '');
 const CANCELLATION_WINDOW_HOURS = 24;
 
 const stripe = process.env.STRIPE_SECRET_KEY ? Stripe(process.env.STRIPE_SECRET_KEY) : null;
@@ -84,6 +86,21 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
           if (!names.includes('profilePhoto')) db.run('ALTER TABLE users ADD COLUMN profilePhoto TEXT');
         });
       }
+    }
+  );
+
+  db.run(
+    `CREATE TABLE IF NOT EXISTS password_resets (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      userId INTEGER NOT NULL,
+      token TEXT NOT NULL UNIQUE,
+      expiresAt TEXT NOT NULL,
+      used INTEGER DEFAULT 0,
+      FOREIGN KEY (userId) REFERENCES users(id)
+    )`,
+    (err) => {
+      if (err) console.error('Error creating password_resets table:', err.message);
+      else console.log('password_resets table ready.');
     }
   );
 
@@ -476,6 +493,80 @@ app.post('/api/login', (req, res) => {
       },
     });
   });
+});
+
+function sendPasswordResetEmail(to, resetUrl) {
+  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+    console.warn('Password reset email skipped: set GMAIL_USER and GMAIL_APP_PASSWORD');
+    return Promise.resolve();
+  }
+  return mailTransporter.sendMail({
+    from: `"Core School" <${process.env.GMAIL_USER}>`,
+    to,
+    subject: 'Reset your Core School password',
+    text: `Reset your password (link expires in 1 hour):\n${resetUrl}\n\nIf you did not request this, ignore this email.`,
+    html: `<p>You requested a password reset for <strong>Core School</strong>.</p><p><a href="${resetUrl}" style="color:#0077ff;font-weight:600;">Set a new password</a></p><p style="color:#666;font-size:14px;">This link expires in 1 hour. If you did not request a reset, you can ignore this message.</p>`,
+  });
+}
+
+app.post('/api/auth/forgot-password', (req, res) => {
+  const email = String(req.body.email || '').trim().toLowerCase();
+  const generic = { message: 'If that email is registered, you will receive reset instructions shortly.' };
+  if (!email) return res.status(400).json({ error: 'Email is required' });
+
+  db.get('SELECT id, email FROM users WHERE lower(email) = ?', [email], (err, user) => {
+    if (err) return res.status(500).json({ error: 'Database error' });
+    if (!user) return res.json(generic);
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+
+    db.run('DELETE FROM password_resets WHERE userId = ?', [user.id], (delErr) => {
+      if (delErr) console.error('password_resets delete:', delErr.message);
+      db.run(
+        'INSERT INTO password_resets (userId, token, expiresAt) VALUES (?, ?, ?)',
+        [user.id, token, expiresAt],
+        async (insErr) => {
+          if (insErr) return res.status(500).json({ error: 'Database error' });
+          const base = APP_BASE_URL || `${req.protocol}://${req.get('host')}`;
+          const resetUrl = `${base}/reset-password.html?token=${encodeURIComponent(token)}`;
+          try {
+            await sendPasswordResetEmail(user.email, resetUrl);
+          } catch (mailErr) {
+            console.error('sendPasswordResetEmail:', mailErr);
+          }
+          res.json(generic);
+        }
+      );
+    });
+  });
+});
+
+app.post('/api/auth/reset-password', async (req, res) => {
+  try {
+    const { token, password } = req.body;
+    if (!token || !password) return res.status(400).json({ error: 'Token and new password are required' });
+    if (String(password).length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
+
+    db.get(
+      'SELECT * FROM password_resets WHERE token = ? AND used = 0',
+      [token],
+      async (err, row) => {
+        if (err) return res.status(500).json({ error: 'Database error' });
+        if (!row) return res.status(400).json({ error: 'Invalid or expired reset link' });
+        if (new Date(row.expiresAt) < new Date()) return res.status(400).json({ error: 'Reset link has expired' });
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        db.run('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, row.userId], function (e) {
+          if (e) return res.status(500).json({ error: 'Database error' });
+          db.run('UPDATE password_resets SET used = 1 WHERE id = ?', [row.id]);
+          res.json({ message: 'Password updated. You can log in with your new password.' });
+        });
+      }
+    );
+  } catch {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // ===================== PROFILE =====================

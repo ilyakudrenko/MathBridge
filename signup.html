@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign Up - Core School</title>
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/auth-shared.css" />
   <style>
     .auth-container {
       min-height: 100vh;
@@ -16,23 +17,6 @@
     }
     .auth-card {
       background: #fff;
-      border-radius: 24px;
-      padding: 3rem 2.5rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      max-width: 520px;
-      width: 100%;
-    }
-    .auth-card h2 {
-      font-size: 2.2rem;
-      margin-bottom: 0.5rem;
-      color: #111;
-      text-align: center;
-    }
-    .auth-card > p {
-      text-align: center;
-      color: #555;
-      margin-bottom: 1.8rem;
-      font-size: 1.05rem;
     }
 
     /* ====== Liquid Glass Toggle ====== */
@@ -91,56 +75,11 @@
       color: #fff;
     }
 
-    /* ====== Auth Form ====== */
+    /* Form layout (inputs styled via auth-shared.css) */
     .auth-form {
       display: flex;
       flex-direction: column;
-      gap: 1.3rem;
-    }
-    .auth-form input,
-    .auth-form select {
-      width: 100%;
-      padding: 1rem 1.2rem;
-      border-radius: 16px;
-      border: 1px solid #e0e3e8;
-      font-size: 1.05rem;
-      font-family: inherit;
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .auth-form input:focus,
-    .auth-form select:focus {
-      border-color: #0077ff;
-      box-shadow: 0 0 0 3px rgba(0, 119, 255, 0.1);
-      outline: none;
-    }
-    .auth-btn {
-      background: rgba(0, 119, 255, 0.9);
-      backdrop-filter: blur(12px) saturate(180%);
-      -webkit-backdrop-filter: blur(12px) saturate(180%);
-      color: #fff;
-      width: 100%;
-      padding: 1rem 1.5rem;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 16px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      margin-top: 0.5rem;
-      box-shadow: 0 4px 16px rgba(0, 119, 255, 0.25);
-      text-align: center;
-    }
-    .auth-btn:hover {
-      background: rgba(0, 95, 204, 0.95);
-      box-shadow: 0 6px 24px rgba(0, 119, 255, 0.35);
-    }
-    .auth-btn:disabled {
-      background: rgba(180, 180, 180, 0.6);
-      box-shadow: none;
-      cursor: not-allowed;
+      gap: 1.25rem;
     }
 
     /* ====== Password Strength ====== */
@@ -386,19 +325,6 @@
     .success-message { background: rgba(52, 199, 89, 0.08); color: #2d8a4e; border: 1px solid rgba(52, 199, 89, 0.15); }
     .error-message.show, .success-message.show { display: block; }
 
-    .auth-links {
-      text-align: center;
-      margin-top: 1.5rem;
-      color: #555;
-    }
-    .auth-links a {
-      color: #0077ff;
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .auth-links a:hover {
-      text-decoration: underline;
-    }
     .back-home {
       position: absolute;
       top: 2rem;
@@ -414,7 +340,7 @@
 
     /* Section transitions */
     .form-section { display: none; }
-    .form-section.active { display: flex; flex-direction: column; gap: 1.3rem; }
+    .form-section.active { display: flex; flex-direction: column; gap: 1.25rem; }
 
     .pending-notice {
       text-align: center;
@@ -433,11 +359,11 @@
   </style>
 </head>
 <body>
-  <div class="auth-container">
+  <div class="auth-container auth-surface">
     <a href="index.html" class="back-home">&larr; Back to Home</a>
     <div class="auth-card">
-      <h2>Create Account</h2>
-      <p>Join Core School and start your learning journey</p>
+      <h2>Create account</h2>
+      <p class="subtitle">Join Core School and start your learning journey</p>
 
       <!-- Role Toggle -->
       <div class="role-toggle-wrapper">
@@ -518,7 +444,18 @@
           </div>
         </div>
 
-        <button type="submit" class="auth-btn" id="submitBtn">Sign Up</button>
+        <div class="legal-consent">
+          <label>
+            <input type="checkbox" id="agreeTerms" required />
+            <span>I agree to the <a href="terms.html" target="_blank" rel="noopener">Terms of Service</a></span>
+          </label>
+          <label>
+            <input type="checkbox" id="agreePrivacy" required />
+            <span>I agree to the <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a></span>
+          </label>
+        </div>
+
+        <button type="submit" class="auth-btn" id="submitBtn">Sign up</button>
       </form>
 
       <div class="auth-links">
@@ -680,6 +617,11 @@
 
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (!document.getElementById('agreeTerms').checked || !document.getElementById('agreePrivacy').checked) {
+        errorMessage.textContent = 'Please accept the Terms of Service and Privacy Policy to continue.';
+        errorMessage.classList.add('show');
+        return;
+      }
       submitBtn.disabled = true;
       submitBtn.textContent = 'Creating account...';
       errorMessage.classList.remove('show');
@@ -749,7 +691,7 @@
         errorMessage.classList.add('show');
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Sign Up';
+        submitBtn.textContent = 'Sign up';
       }
     });
   </script>
