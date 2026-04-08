@@ -16,14 +16,14 @@
     }
     .auth-card {
       background: #fff;
-      border-radius: 20px;
-      padding: 3rem;
+      border-radius: 24px;
+      padding: 3rem 2.5rem;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      max-width: 480px;
+      max-width: 520px;
       width: 100%;
     }
     .auth-card h2 {
-      font-size: 2rem;
+      font-size: 2.2rem;
       margin-bottom: 0.5rem;
       color: #111;
       text-align: center;
@@ -31,7 +31,8 @@
     .auth-card > p {
       text-align: center;
       color: #555;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.8rem;
+      font-size: 1.05rem;
     }
 
     /* ====== Liquid Glass Toggle ====== */
@@ -43,9 +44,9 @@
     .role-toggle {
       position: relative;
       display: flex;
-      width: 240px;
-      height: 44px;
-      border-radius: 22px;
+      width: 280px;
+      height: 48px;
+      border-radius: 24px;
       background: rgba(120, 120, 128, 0.12);
       backdrop-filter: blur(20px) saturate(180%);
       -webkit-backdrop-filter: blur(20px) saturate(180%);
@@ -60,8 +61,8 @@
       top: 3px;
       left: 3px;
       width: calc(50% - 3px);
-      height: 38px;
-      border-radius: 19px;
+      height: 42px;
+      border-radius: 21px;
       background: rgba(0, 119, 255, 0.85);
       backdrop-filter: blur(12px) saturate(200%);
       -webkit-backdrop-filter: blur(12px) saturate(200%);
@@ -78,7 +79,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.92rem;
+      font-size: 1rem;
       font-weight: 600;
       color: #555;
       z-index: 2;
@@ -94,15 +95,15 @@
     .auth-form {
       display: flex;
       flex-direction: column;
-      gap: 1.1rem;
+      gap: 1.3rem;
     }
     .auth-form input,
     .auth-form select {
       width: 100%;
-      padding: 0.85rem 1rem;
-      border-radius: 10px;
-      border: 1px solid #ddd;
-      font-size: 0.95rem;
+      padding: 1rem 1.2rem;
+      border-radius: 16px;
+      border: 1px solid #e0e3e8;
+      font-size: 1.05rem;
       font-family: inherit;
       background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(8px);
@@ -120,15 +121,17 @@
       backdrop-filter: blur(12px) saturate(180%);
       -webkit-backdrop-filter: blur(12px) saturate(180%);
       color: #fff;
-      padding: 0.9rem 1.5rem;
+      width: 100%;
+      padding: 1rem 1.5rem;
       border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 12px;
-      font-size: 1.05rem;
+      border-radius: 16px;
+      font-size: 1.1rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s;
       margin-top: 0.5rem;
       box-shadow: 0 4px 16px rgba(0, 119, 255, 0.25);
+      text-align: center;
     }
     .auth-btn:hover {
       background: rgba(0, 95, 204, 0.95);
@@ -140,6 +143,53 @@
       cursor: not-allowed;
     }
 
+    /* ====== Password Strength ====== */
+    .password-wrapper {
+      position: relative;
+    }
+    .password-wrapper input {
+      width: 100%;
+    }
+    .strength-bar {
+      display: flex;
+      gap: 4px;
+      margin-top: 0.5rem;
+      align-items: center;
+      height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: height 0.3s, opacity 0.3s;
+    }
+    .strength-bar.visible {
+      height: 22px;
+      opacity: 1;
+    }
+    .strength-bar .bar-segment {
+      flex: 1;
+      height: 5px;
+      border-radius: 3px;
+      background: #e5e7eb;
+      transition: background 0.35s;
+    }
+    .strength-bar .bar-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-left: 0.5rem;
+      white-space: nowrap;
+      transition: color 0.35s;
+    }
+    .strength-bar[data-level="1"] .bar-segment:nth-child(1) { background: #ef4444; }
+    .strength-bar[data-level="1"] .bar-label { color: #ef4444; }
+    .strength-bar[data-level="2"] .bar-segment:nth-child(1),
+    .strength-bar[data-level="2"] .bar-segment:nth-child(2) { background: #f59e0b; }
+    .strength-bar[data-level="2"] .bar-label { color: #f59e0b; }
+    .strength-bar[data-level="3"] .bar-segment:nth-child(1),
+    .strength-bar[data-level="3"] .bar-segment:nth-child(2),
+    .strength-bar[data-level="3"] .bar-segment:nth-child(3) { background: #22c55e; }
+    .strength-bar[data-level="3"] .bar-label { color: #22c55e; }
+    .strength-bar[data-level="4"] .bar-segment { background: #16a34a; }
+    .strength-bar[data-level="4"] .bar-label { color: #16a34a; }
+
     /* ====== Photo Upload ====== */
     .photo-upload-wrapper {
       display: flex;
@@ -147,8 +197,8 @@
       margin-bottom: 0.5rem;
     }
     .photo-upload {
-      width: 120px;
-      height: 120px;
+      width: 140px;
+      height: 140px;
       border-radius: 50%;
       border: 2.5px dashed rgba(0, 119, 255, 0.5);
       display: flex;
@@ -173,9 +223,9 @@
     .photo-upload .upload-placeholder {
       text-align: center;
       color: #0077ff;
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       font-weight: 500;
-      line-height: 1.3;
+      line-height: 1.4;
     }
     .photo-upload .upload-placeholder svg {
       display: block;
@@ -184,41 +234,105 @@
     .photo-upload input[type="file"] {
       display: none;
     }
-
-    /* ====== Subjects Multi-Select ====== */
-    .subjects-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.5rem;
-    }
-    .subject-chip {
+    .initials-placeholder {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.55rem 0.75rem;
-      border-radius: 10px;
-      border: 1px solid #ddd;
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
+      justify-content: center;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(135deg, #0077ff, #00c6ff);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* ====== Subjects Multi-Select (Duolingo-style) ====== */
+    .subjects-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    .subject-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      border-radius: 16px;
+      border: 2px solid #e8ecf0;
+      background: #fff;
       cursor: pointer;
-      transition: all 0.25s;
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: #333;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       user-select: none;
+      position: relative;
     }
-    .subject-chip:hover {
+    .subject-card:hover {
+      border-color: #b8d4ff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(0, 119, 255, 0.08);
+    }
+    .subject-card.selected {
       border-color: #0077ff;
+      background: rgba(0, 119, 255, 0.04);
+      box-shadow: 0 4px 18px rgba(0, 119, 255, 0.12);
     }
-    .subject-chip.selected {
+    .subject-card input { display: none; }
+    .subject-card-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: #f0f4fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      transition: background 0.25s;
+    }
+    .subject-card.selected .subject-card-icon {
       background: rgba(0, 119, 255, 0.1);
-      border-color: rgba(0, 119, 255, 0.5);
-      color: #0057b8;
-      box-shadow: 0 2px 8px rgba(0, 119, 255, 0.1);
     }
-    .subject-chip input {
-      display: none;
+    .subject-card-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .subject-card-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #111;
+      line-height: 1.3;
+    }
+    .subject-card-desc {
+      font-size: 0.82rem;
+      color: #888;
+      margin-top: 0.15rem;
+      line-height: 1.3;
+    }
+    .subject-card-check {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid #d0d5dd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.25s;
+    }
+    .subject-card.selected .subject-card-check {
+      border-color: #0077ff;
+      background: #0077ff;
+    }
+    .subject-card-check svg {
+      width: 14px;
+      height: 14px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .subject-card.selected .subject-card-check svg {
+      opacity: 1;
     }
 
     /* ====== Calendly Field ====== */
@@ -226,40 +340,44 @@
       position: relative;
     }
     .calendly-field input {
-      padding-right: 110px;
+      padding-right: 130px;
     }
     .calendly-open-btn {
       position: absolute;
       right: 6px;
       top: 50%;
       transform: translateY(-50%);
-      padding: 0.4rem 0.75rem;
-      border-radius: 8px;
+      padding: 0.55rem 1rem;
+      border-radius: 14px;
       border: none;
-      background: rgba(0, 119, 255, 0.1);
+      background: rgba(0, 119, 255, 0.12);
       color: #0077ff;
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: background 0.2s, box-shadow 0.2s;
       white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
     }
     .calendly-open-btn:hover {
-      background: rgba(0, 119, 255, 0.2);
+      background: rgba(0, 119, 255, 0.22);
+      box-shadow: 0 2px 8px rgba(0, 119, 255, 0.1);
     }
 
     /* ====== Field Label ====== */
     .field-label {
-      font-size: 0.85rem;
+      font-size: 0.95rem;
       font-weight: 600;
       color: #333;
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.4rem;
     }
 
     /* ====== Messages ====== */
     .error-message, .success-message {
       padding: 0.8rem;
-      border-radius: 10px;
+      border-radius: 16px;
       margin-bottom: 1rem;
       display: none;
       font-size: 0.9rem;
@@ -296,13 +414,21 @@
 
     /* Section transitions */
     .form-section { display: none; }
-    .form-section.active { display: flex; flex-direction: column; gap: 1.1rem; }
+    .form-section.active { display: flex; flex-direction: column; gap: 1.3rem; }
 
     .pending-notice {
       text-align: center;
-      font-size: 0.82rem;
-      color: #888;
-      margin-top: -0.5rem;
+      font-size: 0.88rem;
+      color: #6b7280;
+      margin-top: -0.3rem;
+      padding: 0.75rem 1rem;
+      background: rgba(245, 158, 11, 0.06);
+      border: 1px solid rgba(245, 158, 11, 0.15);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
     }
   </style>
 </head>
@@ -326,34 +452,52 @@
       <div class="success-message" id="successMessage"></div>
 
       <form id="signupForm">
+        <!-- ===== PHOTO UPLOAD (both roles) ===== -->
+        <div class="photo-upload-wrapper">
+          <label class="photo-upload" id="photoUpload">
+            <input type="file" id="photoInput" accept="image/*" />
+            <div class="upload-placeholder" id="photoPlaceholder">
+              <svg width="28" height="28" fill="none" stroke="#0077ff" stroke-width="1.5" viewBox="0 0 24 24">
+                <path d="M12 16V8m0 0l-3 3m3-3l3 3" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="10" opacity=".3"/>
+              </svg>
+              Upload<br/>Photo
+            </div>
+            <div class="initials-placeholder" id="initialsPlaceholder" style="display:none;"></div>
+            <img id="photoPreview" src="" alt="" style="display:none;" />
+          </label>
+        </div>
+
         <!-- ===== TEACHER FIELDS ===== -->
         <div class="form-section" id="teacherFields">
-          <div class="photo-upload-wrapper">
-            <label class="photo-upload" id="photoUpload">
-              <input type="file" id="photoInput" accept="image/*" />
-              <div class="upload-placeholder" id="photoPlaceholder">
-                <svg width="28" height="28" fill="none" stroke="#0077ff" stroke-width="1.5" viewBox="0 0 24 24">
-                  <path d="M12 16V8m0 0l-3 3m3-3l3 3" stroke-linecap="round" stroke-linejoin="round"/>
-                  <circle cx="12" cy="12" r="10" opacity=".3"/>
-                </svg>
-                Upload<br/>Photo
-              </div>
-              <img id="photoPreview" src="" alt="" style="display:none;" />
-            </label>
-          </div>
           <input type="text" id="tFirstName" placeholder="First name" autocomplete="given-name" />
           <input type="text" id="tLastName" placeholder="Last name" autocomplete="family-name" />
           <input type="email" id="tEmail" placeholder="Email" required autocomplete="email" />
-          <input type="password" id="tPassword" placeholder="Password (min 6 chars)" required autocomplete="new-password" minlength="6" />
+          <div class="password-wrapper">
+            <input type="password" id="tPassword" placeholder="Password (min 6 chars)" required autocomplete="new-password" minlength="6" />
+            <div class="strength-bar" id="tStrengthBar">
+              <div class="bar-segment"></div>
+              <div class="bar-segment"></div>
+              <div class="bar-segment"></div>
+              <div class="bar-segment"></div>
+              <span class="bar-label"></span>
+            </div>
+          </div>
           <div>
             <div class="field-label">Select your subjects</div>
             <div class="subjects-grid" id="subjectsGrid"></div>
           </div>
           <div class="calendly-field">
             <input type="url" id="tCalendly" placeholder="Your Calendly link" />
-            <button type="button" class="calendly-open-btn" onclick="window.open('https://calendly.com','_blank')">Open Calendly</button>
+            <button type="button" class="calendly-open-btn" onclick="window.open('https://calendly.com','_blank')">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Open Calendly
+            </button>
           </div>
-          <p class="pending-notice">Your profile will be reviewed by admin before going live.</p>
+          <p class="pending-notice">
+            <svg width="16" height="16" fill="none" stroke="#f59e0b" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Your profile will be reviewed by admin before going live.
+          </p>
         </div>
 
         <!-- ===== STUDENT FIELDS ===== -->
@@ -362,7 +506,16 @@
           <input type="text" id="sLastName" placeholder="Enter your last name" autocomplete="family-name" />
           <input type="email" id="sEmail" placeholder="Enter your email" required autocomplete="email" />
           <input type="tel" id="sPhone" placeholder="Enter your phone number (optional)" autocomplete="tel" />
-          <input type="password" id="sPassword" placeholder="Enter your password" required autocomplete="new-password" minlength="6" />
+          <div class="password-wrapper">
+            <input type="password" id="sPassword" placeholder="Enter your password" required autocomplete="new-password" minlength="6" />
+            <div class="strength-bar" id="sStrengthBar">
+              <div class="bar-segment"></div>
+              <div class="bar-segment"></div>
+              <div class="bar-segment"></div>
+              <div class="bar-segment"></div>
+              <span class="bar-label"></span>
+            </div>
+          </div>
         </div>
 
         <button type="submit" class="auth-btn" id="submitBtn">Sign Up</button>
@@ -396,29 +549,48 @@
 
       teacherFields.querySelectorAll('input[required]').forEach(i => i.required = currentRole === 'teacher');
       studentFields.querySelectorAll('input[required]').forEach(i => i.required = currentRole === 'student');
+
+      if (typeof updateInitials === 'function') updateInitials();
     });
 
     // Load subjects for teacher form
+    const subjectMeta = {
+      'mathematics': { icon: '📐', desc: 'Algebra, calculus, geometry' },
+      'biology':     { icon: '🔬', desc: 'Cellular biology, genetics, ecology' },
+      'ai':          { icon: '🤖', desc: 'Machine learning & AI fundamentals' },
+      'computer-science': { icon: '💻', desc: 'Programming & algorithms' },
+    };
+
     async function loadSubjects() {
       try {
         const res = await fetch('/api/credits/rates');
         const data = await res.json();
         const grid = document.getElementById('subjectsGrid');
         (data.rates || []).forEach(r => {
-          const chip = document.createElement('label');
-          chip.className = 'subject-chip';
-          chip.innerHTML = `<input type="checkbox" value="${r.subject_key}" />${r.label}`;
-          chip.addEventListener('click', (e) => {
+          const meta = subjectMeta[r.subject_key] || { icon: '📚', desc: r.label };
+          const card = document.createElement('label');
+          card.className = 'subject-card';
+          card.innerHTML = `
+            <input type="checkbox" value="${r.subject_key}" />
+            <div class="subject-card-icon">${meta.icon}</div>
+            <div class="subject-card-body">
+              <div class="subject-card-name">${r.label}</div>
+              <div class="subject-card-desc">${meta.desc}</div>
+            </div>
+            <div class="subject-card-check">
+              <svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>`;
+          card.addEventListener('click', (e) => {
             if (e.target.tagName === 'INPUT') return;
-            const cb = chip.querySelector('input');
+            const cb = card.querySelector('input');
             cb.checked = !cb.checked;
-            chip.classList.toggle('selected', cb.checked);
+            card.classList.toggle('selected', cb.checked);
             e.preventDefault();
           });
-          chip.querySelector('input').addEventListener('change', () => {
-            chip.classList.toggle('selected', chip.querySelector('input').checked);
+          card.querySelector('input').addEventListener('change', () => {
+            card.classList.toggle('selected', card.querySelector('input').checked);
           });
-          grid.appendChild(chip);
+          grid.appendChild(card);
         });
       } catch (e) {
         console.error('Error loading subjects:', e);
@@ -426,24 +598,86 @@
     }
     loadSubjects();
 
-    // Photo upload preview
+    // ===================== PASSWORD STRENGTH =====================
+
+    function getPasswordStrength(pw) {
+      if (!pw) return { level: 0, label: '' };
+      let score = 0;
+      if (pw.length >= 6) score++;
+      if (pw.length >= 10) score++;
+      if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score++;
+      if (/\d/.test(pw)) score++;
+      if (/[^A-Za-z0-9]/.test(pw)) score++;
+      if (score <= 1) return { level: 1, label: 'Weak' };
+      if (score <= 2) return { level: 2, label: 'Fair' };
+      if (score <= 3) return { level: 3, label: 'Strong' };
+      return { level: 4, label: 'Very strong' };
+    }
+
+    function attachStrengthMeter(inputId, barId) {
+      const input = document.getElementById(inputId);
+      const bar = document.getElementById(barId);
+      if (!input || !bar) return;
+      input.addEventListener('input', () => {
+        const { level, label } = getPasswordStrength(input.value);
+        if (input.value.length > 0) {
+          bar.classList.add('visible');
+          bar.dataset.level = level;
+          bar.querySelector('.bar-label').textContent = label;
+        } else {
+          bar.classList.remove('visible');
+          bar.dataset.level = '0';
+        }
+      });
+    }
+    attachStrengthMeter('tPassword', 'tStrengthBar');
+    attachStrengthMeter('sPassword', 'sStrengthBar');
+
+    // ===================== PHOTO + INITIALS =====================
+
     const photoInput = document.getElementById('photoInput');
     const photoPreview = document.getElementById('photoPreview');
     const photoPlaceholder = document.getElementById('photoPlaceholder');
+    const initialsPlaceholder = document.getElementById('initialsPlaceholder');
+    let hasUploadedPhoto = false;
 
     photoInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
+      hasUploadedPhoto = true;
       const reader = new FileReader();
       reader.onload = (ev) => {
         photoPreview.src = ev.target.result;
         photoPreview.style.display = 'block';
         photoPlaceholder.style.display = 'none';
+        initialsPlaceholder.style.display = 'none';
       };
       reader.readAsDataURL(file);
     });
 
-    // Form submit
+    function updateInitials() {
+      if (hasUploadedPhoto) return;
+      const fnId = currentRole === 'teacher' ? 'tFirstName' : 'sFirstName';
+      const lnId = currentRole === 'teacher' ? 'tLastName' : 'sLastName';
+      const fn = (document.getElementById(fnId).value || '').trim();
+      const ln = (document.getElementById(lnId).value || '').trim();
+      const initials = ((fn[0] || '') + (ln[0] || '')).toUpperCase();
+      if (initials) {
+        initialsPlaceholder.textContent = initials;
+        initialsPlaceholder.style.display = 'flex';
+        photoPlaceholder.style.display = 'none';
+      } else {
+        initialsPlaceholder.style.display = 'none';
+        photoPlaceholder.style.display = '';
+      }
+    }
+
+    ['tFirstName', 'tLastName', 'sFirstName', 'sLastName'].forEach(id => {
+      document.getElementById(id).addEventListener('input', updateInitials);
+    });
+
+    // ===================== FORM SUBMIT =====================
+
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       submitBtn.disabled = true;
@@ -490,8 +724,7 @@
           localStorage.setItem('token', data.token);
           localStorage.setItem('user', JSON.stringify(data.user));
 
-          // Upload photo if teacher and photo selected
-          if (currentRole === 'teacher' && photoInput.files[0]) {
+          if (photoInput.files[0]) {
             const formData = new FormData();
             formData.append('photo', photoInput.files[0]);
             await fetch('/api/upload-photo', {

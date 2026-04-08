@@ -7,22 +7,12 @@ const nodemailer = require('nodemailer');
 const Stripe = require('stripe');
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
+
 require('dotenv').config();
 
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadsDir),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `avatar_${Date.now()}${ext}`);
-  },
-});
 const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 2 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowed = /jpeg|jpg|png|gif|webp/;
     if (allowed.test(path.extname(file.originalname).toLowerCase()) && allowed.test(file.mimetype)) {
@@ -54,7 +44,6 @@ app.use(cors());
 app.use('/api/stripe/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json());
 app.use(express.static('.'));
-app.use('/uploads', express.static(uploadsDir));
 
 // Initialize database
 const db = new sqlite3.Database(DB_PATH, (err) => {
@@ -562,17 +551,17 @@ app.put('/api/profile', authenticateToken, (req, res) => {
 app.post('/api/upload-photo', authenticateToken, upload.single('photo'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No photo uploaded' });
 
-  const photoUrl = `/uploads/${req.file.filename}`;
-  db.run('UPDATE users SET profilePhoto = ? WHERE id = ?', [photoUrl, req.user.id], function (err) {
+  const dataUri = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+  db.run('UPDATE users SET profilePhoto = ? WHERE id = ?', [dataUri, req.user.id], function (err) {
     if (err) return res.status(500).json({ error: 'Error saving photo' });
 
     db.get('SELECT role FROM users WHERE id = ?', [req.user.id], (e, user) => {
       if (user && user.role === 'teacher') {
-        db.run('UPDATE tutors SET image = ? WHERE userId = ?', [photoUrl, req.user.id]);
+        db.run('UPDATE tutors SET image = ? WHERE userId = ?', [dataUri, req.user.id]);
       }
     });
 
-    res.json({ message: 'Photo uploaded', photoUrl });
+    res.json({ message: 'Photo uploaded', photoUrl: dataUri });
   });
 });
 
